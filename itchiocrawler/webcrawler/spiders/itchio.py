@@ -6,7 +6,7 @@ import logging
 
 class ItchioSpider(scrapy.Spider):
 
-    logging.basicConfig(level=logging.INFO, filemode='w', filename='jam_crawler_log.txt')
+    logging.basicConfig(level=logging.INFO, filemode='w', filename='jam_crawler.log')
     observer = twisted_log.PythonLoggingObserver()
     observer.start()
 
