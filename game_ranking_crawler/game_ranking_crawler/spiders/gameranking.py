@@ -11,7 +11,7 @@ import os
 
 class GamerankingSpider(scrapy.Spider):
 
-    logging.basicConfig(level=logging.INFO, filemode='w', filename='game_crawler.log')
+    logging.basicConfig(level=logging.INFO, filemode='w', filename='game_ranking_crawler.log')
     observer = twisted_log.PythonLoggingObserver()
     observer.start()
 
@@ -24,14 +24,12 @@ class GamerankingSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir, 'jams.csv'))
-
-    print(df["jam_url"].tolist()[0])
+    df = pd.read_csv(os.path.join(greatGrandParentDir, 'jams-filter.csv'))
 
     # start_urls = [x + "/results" for x in df["jam_url"].tolist()]
-    start_urls = [df["jam_url"].tolist()[1] + "/results"]
-    # print(start_urls)
-    # input("testestsetsetes")
+    start_urls = [df["jam_url"].tolist()[0] + "/results",
+                  df["jam_url"].tolist()[12] + "/results",
+                  df["jam_url"].tolist()[1396] + "/results"]
     # start_urls = ['http://https://itch.io/jam/']
 
     def parse(self, response):
@@ -43,7 +41,7 @@ class GamerankingSpider(scrapy.Spider):
         if next_page:
             next_page_url = response.urljoin(next_page)
             print("Found url: {}".format(next_page_url))
-            input("Press to continue...")
+            # input("Press to continue...")
             yield scrapy.Request(
                 next_page_url,
                 callback=self.parse
