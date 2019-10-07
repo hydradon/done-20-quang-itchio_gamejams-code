@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 df2 = pd.read_csv('itchiocrawler/jams.csv')
-df2.dropna(subset=['jam_criteria'], inplace=True)
+# df2.dropna(subset=['jam_criteria'], inplace=True)
 df2['jam_no_rating'].fillna('0', inplace = True)
 
 df2['jam_no_rating'] = df2['jam_no_rating'].str.replace(',', '')
@@ -14,4 +14,4 @@ df2['jam_no_rating'] = (df2['jam_no_rating'].replace(r'[km]+$', '', regex=True).
 
 print(len(df2))
 print(df2.head(15))
-df2.to_csv('jams-filter.csv', encoding='utf-8-sig', index=False)
+df2.to_csv('dataset/jams-filter.csv', encoding='utf-8-sig', index=False)

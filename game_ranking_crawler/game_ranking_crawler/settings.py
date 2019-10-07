@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'game_ranking_crawler.spiders'
 
 #Export as CSV Feed
 FEED_FORMAT = "csv"
-FEED_URI = "game_rankings.csv"
+FEED_URI = "../dataset/game_rankings.csv"
 FEED_EXPORT_ENCODING = "utf-8-sig"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

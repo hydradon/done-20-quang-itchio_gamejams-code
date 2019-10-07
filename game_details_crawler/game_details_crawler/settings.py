@@ -16,11 +16,12 @@ NEWSPIDER_MODULE = 'game_details_crawler.spiders'
 
 #Export as CSV Feed
 FEED_FORMAT = "csv"
-FEED_URI = "game_details.csv"
+FEED_URI = "../dataset/game_details1.csv"
 FEED_EXPORT_ENCODING = "utf-8-sig"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Vu N. Quang - researcher (ngocquan@ualberta.ca)'
+# USER_AGENT = 'Vu N. Quang - researcher (ngocquan@ualberta.ca)'
+USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -51,14 +52,14 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'webcrawler.middlewares.WebcrawlerSpiderMiddleware': 543,
+#    'webcrawler.middlewares.GameDetailsCrawlerSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'webcrawler.middlewares.WebcrawlerDownloaderMiddleware': 543,
-#}
+# DOWNLOADER_MIDDLEWARES = {
+#    'game_details_crawler.middlewares.GameDetailsCrawlerDownloaderMiddleware': 543,
+# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

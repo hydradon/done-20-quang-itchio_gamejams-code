@@ -10,8 +10,7 @@ import os
 
 
 class GamerankingSpider(scrapy.Spider):
-
-    logging.basicConfig(level=logging.INFO, filemode='w', filename='game_ranking_crawler.log')
+    logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('gme_ranking_crawler.log', 'w', 'utf-8-sig')])
     observer = twisted_log.PythonLoggingObserver()
     observer.start()
 
@@ -24,13 +23,16 @@ class GamerankingSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir, 'jams-filter.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir, 'jams.csv'))
 
-    # start_urls = [x + "/results" for x in df["jam_url"].tolist()]
-    start_urls = [df["jam_url"].tolist()[0] + "/results",
-                  df["jam_url"].tolist()[12] + "/results",
-                  df["jam_url"].tolist()[1396] + "/results"]
-    # start_urls = ['http://https://itch.io/jam/']
+    start_urls = [x + "/results" for x in df["jam_url"].tolist()]
+
+    # start_urls = ["https://itch.io/jam/awful-summer-jam-2018/results/community-choice"]
+
+    # https://itch.io/jam/awful-summer-2019/results/best-solo-entry
+    # https://itch.io/jam/leapmotion3djam        
+    # https://itch.io/jam/icantdraw/results    
+    print(start_urls)
 
     def parse(self, response):
         for item in self.scrape(response):
@@ -71,13 +73,13 @@ class GamerankingSpider(scrapy.Spider):
             game_scores = []
             game_raw_scores = []
 
-            rankings = game.xpath('.//table[@class="nice_table ranking_results_table"]//tr ')
+            rankings = game.xpath('.//table[@class="nice_table ranking_results_table"]//tr')
             for ranking in rankings[1:]:
 
                 criteria = ranking.xpath('td[1]/descendant-or-self::text()').extract_first()
-                rank = ranking.xpath('td[2]/text()').extract_first().replace('#', '')
-                score = ranking.xpath('td[3]/text()').extract_first()
-                raw_score = ranking.xpath('td[4]/text()').extract_first()
+                rank = ranking.xpath('td[2]/descendant-or-self::text()').extract_first().replace('#', '')
+                score = ranking.xpath('td[3]/descendant-or-self::text()').extract_first()
+                raw_score = ranking.xpath('td[4]/descendant-or-self::text()').extract_first()
 
                 game_criteria.append(criteria)
                 game_ranks.append(rank)

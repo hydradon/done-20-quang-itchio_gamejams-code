@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'webcrawler.spiders'
 
 #Export as CSV Feed
 FEED_FORMAT = "csv"
-FEED_URI = "jams.csv"
+FEED_URI = "../dataset/jams.csv"
 FEED_EXPORT_ENCODING = "utf-8-sig"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
