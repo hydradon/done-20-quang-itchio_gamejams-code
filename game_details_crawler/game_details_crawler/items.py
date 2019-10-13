@@ -28,5 +28,8 @@ class GameDetailsCrawlerItem(scrapy.Item):
     game_language = scrapy.Field()
     game_inputs = scrapy.Field()
     game_accessibility = scrapy.Field()
+    game_source_code = scrapy.Field()
+    game_license = scrapy.Field()
+    game_asset_license = scrapy.Field()
+    game_release_date = scrapy.Field()
 
-    pass

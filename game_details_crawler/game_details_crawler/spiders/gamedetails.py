@@ -4,7 +4,6 @@ from twisted.python import log as twisted_log
 from game_details_crawler.items import GameDetailsCrawlerItem
 import logging
 import pandas as pd
-import sys
 import os
 import idna
 
@@ -21,9 +20,7 @@ class GamedetailsSpider(scrapy.Spider):
 
     name = 'gamedetails'
     allowed_domains = ['itch.io']
-    base_url = 'https://www.itch.io'
 
-    
     fileDir = os.path.dirname(os.path.abspath(__file__))
     parentDir = os.path.dirname(fileDir)
     grandParentDir = os.path.dirname(parentDir)
@@ -33,13 +30,31 @@ class GamedetailsSpider(scrapy.Spider):
     no_of_games = len(df["game_url"].tolist())
 
     # start_urls = [game_url for game_url in df["game_url"].tolist()]
-    # start_urls = [df["game_url"].tolist()[-no_of_games/100:]]   # crawl 1/100 of the dataset
-
-    start_urls = ['https://dj_pale.itch.io/unknown-grounds']
+    start_urls = ['https://itch.io/login']
+    crawl_urls = ['https://dmullinsgames.itch.io/paper-jekyll', 
+                  'https://hunterkepley.itch.io/ice',
+                  'https://dj_pale.itch.io/unknown-grounds']
+    crawl_urls = [game_url for game_url in df["game_url"].tolist()]
 
     def parse(self, response):
-        for item in self.scrape(response):
-            yield item
+        token = response.xpath('//*[@name="csrf_token"]/@value').extract_first()
+        return [scrapy.FormRequest.from_response(response,
+                                                 formdata={'csrf_token': token,
+                                                           'password': 'nosalis9)',
+                                                           'username': 'hydradon'},
+                                                 formcss='.login_form_widget .form',
+                                                 callback=self.check_login_response)]
+
+    def check_login_response(self, response):
+        if b"Incorrect username or password" in response.body:
+            self.log("Login failed", level=logging.ERROR)
+            return
+        else:
+            self.log("Successfully logged in!!")
+            for url in self.crawl_urls:
+                self.log("Number of games left: " + str(self.no_of_games))
+                self.no_of_games -= 1
+                yield scrapy.Request(url=url, callback=self.scrape)
 
     def scrape(self, response):
         item = GameDetailsCrawlerItem()
@@ -51,15 +66,15 @@ class GamedetailsSpider(scrapy.Spider):
         GAME_DESC_SELECTOR = ".formatted_description *::text"
         description = response.css(GAME_DESC_SELECTOR).extract()
         item['game_desc_len'] = len("".join(description).replace('\n', ''))
-        # print(item['game_desc_len'])
+
+        # Extract github location
+        # example multiple github links: https://hunterkepley.itch.io/ice
+        all_links = response.css("a ::attr(href)").extract()
+        githubs = [s for s in all_links if "github.com/" in s or "gitlab.com/" in s]
+        item['game_source_code'] = "||".join(githubs) if len(githubs) > 0 else ""
 
         # Couting number of screenshots
         item['game_no_screenshots'] = len(response.css(".screenshot") + response.css(".formatted_description img"))
-        # print(item['game_no_screenshots'])
-
-        # Extract game download size
-        GAME_SIZE_SELECTOR = ".file_size ::text"
-        item["game_size"] = "||".join(response.css(GAME_SIZE_SELECTOR).extract())
 
         # Extract game price
         GAME_PRICE_SELECTOR = ".buy_message ::text"
@@ -70,28 +85,39 @@ class GamedetailsSpider(scrapy.Spider):
         info_rows = response.css(GAME_INFO_TABLE_ROW_SELECTOR)
         info = {}
         for row in info_rows:
-            row_key = row.xpath("td[1]/descendant-or-self::text()").extract_first()
-
-            if ("update" in row_key.lower()) or ("publish" in row_key.lower()):
+            row_key = row.xpath("td[1]/text()").extract_first()
+            if ("update" in row_key.lower()) or ("publish" in row_key.lower()) or ("release" in row_key.lower()):
                 print(row_key)
                 info[row_key] = row.css("abbr ::attr(title)").extract_first()
             else:
-                info[row_key] = "||".join(row.xpath("td[2]/abbr/text()").extract())
+                info[row_key] = "||".join(row.xpath("td[2]/a/text()").extract())
 
-        # input("test")
-        # print(info)
+        item["game_last_update"]     = info.get("Updated", "")
+        item["game_publish_date"]    = info.get("Published", "")
+        item["game_release_date"]    = info.get("Release date", "")
+        item["game_status"]          = info.get("Status", "")
+        item["game_platforms"]       = info.get("Platforms", "")
+        item["game_genres"]          = info.get("Genre", "")
+        item["game_tags"]            = info.get("Tags", "")
+        item["game_made_with"]       = info.get("Made with", "")
+        item["game_ave_session"]     = info.get("Average session", "")
+        item["game_language"]        = info.get("Languages", "")
+        item["game_inputs"]          = info.get("Inputs", "")
+        item["game_accessibility"]   = info.get("Accessibility", "")
+        item["game_license"]         = info.get("License", "")
+        item["game_asset_license"]  = info.get("Asset license", "")
 
-        item["game_last_update"]    = info.get("Updated", "")   # TODO
-        item["game_publish_date"]   = info.get("Published", "") # TODO
-        item["game_status"]         = info.get("Status", "")
-        item["game_platforms"]      = info.get("Platforms", "")
-        item["game_genres"]         = info.get("Genre", "")
-        item["game_tags"]           = info.get("Tags", "")
-        item["game_made_with"]      = info.get("Made with", "")
-        item["game_ave_session"]    = info.get("Average session", "")
-        item["game_language"]       = info.get("Languages", "")
-        item["game_inputs"]         = info.get("Inputs", "")
-        item["game_accessibility"]  = info.get("Accessibility", "")
-    
+        # Download section
+        UPLOAD_SELECTOR = ".upload"
+        all_uploads = response.css(UPLOAD_SELECTOR)
+        download_infos = []
+        for upload in all_uploads:
+            upload_date = upload.css(".upload_date *::attr(title)").extract_first(default = "")
+            upload_size = upload.css(".file_size ::text").extract_first(default = "")
+            upload_name = upload.css(".upload_name .name ::text").extract_first()
+            upload_platform = [plf.replace("Download for ", "") for plf in upload.css(".download_platforms *::attr(title)").extract()]
+            download_infos.append(upload_name + "|" + upload_size + "|" + upload_date + '|' + "|".join(upload_platform))
+
+        item['game_size'] = "<>".join(download_infos)
 
         yield item
