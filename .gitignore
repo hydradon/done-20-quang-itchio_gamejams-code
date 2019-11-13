@@ -125,3 +125,8 @@ dmypy.json
 .pyre/
 *.pyc
 .Rproj.user
+
+# Custom
+.RData
+.RHistory
+crawls/
