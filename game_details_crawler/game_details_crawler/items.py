@@ -15,6 +15,8 @@ class GameDetailsCrawlerItem(scrapy.Item):
     game_url = scrapy.Field()
     game_price = scrapy.Field()
     game_last_update = scrapy.Field()
+    game_developers = scrapy.Field()
+    game_developers_url = scrapy.Field()
     game_publish_date = scrapy.Field()
     game_desc_len = scrapy.Field()
     game_no_screenshots = scrapy.Field()

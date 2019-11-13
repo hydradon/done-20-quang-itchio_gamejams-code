@@ -91,8 +91,8 @@ class NoncompgamedetailsSpider(scrapy.Spider):
 
             criteria = ranking.xpath('td[1]/descendant-or-self::text()').extract_first()
             rank = ranking.xpath('td[2]/descendant-or-self::text()').extract_first().replace('#', '')
-            score = ranking.xpath('td[3]/descendant-or-self::text()').extract_first()
-            raw_score = ranking.xpath('td[4]/descendant-or-self::text()').extract_first()
+            score = ranking.xpath('td[3]/descendant-or-self::text()').extract_first(default = "")
+            raw_score = ranking.xpath('td[4]/descendant-or-self::text()').extract_first(default = "")
 
             game_criteria.append(criteria)
             game_ranks.append(rank)
@@ -104,7 +104,10 @@ class NoncompgamedetailsSpider(scrapy.Spider):
         item['game_scores'] = "||".join(game_scores)
         item['game_raw_scores'] = "||".join(game_raw_scores)
         
-        item['game_no_ratings'] = response.css(".jam_game_results strong ::text").extract_first(default = "").replace(" ratings", "")
+        item['game_no_ratings'] = response.css(".jam_game_results strong ::text")\
+                                          .extract_first(default = "")\
+                                          .replace(" ratings", "")\
+                                          .replace(" rating", "")
 
         request = scrapy.Request(item['game_url'], callback=self.get_game_details)
         request.meta['item'] = item

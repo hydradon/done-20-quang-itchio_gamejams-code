@@ -4,13 +4,12 @@ import pandas as pd
 from game_ranking_crawler.items import GameRankingCrawlerItem
 from twisted.python import log as twisted_log
 import logging
-import pandas as pd
 import sys
 import os
 
 
 class GamerankingSpider(scrapy.Spider):
-    logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('gme_ranking_crawler.log', 'w', 'utf-8-sig')])
+    logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('game_ranking_crawler.log', 'w', 'utf-8-sig')])
     observer = twisted_log.PythonLoggingObserver()
     observer.start()
 
@@ -23,15 +22,26 @@ class GamerankingSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir, 'jams.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams1.csv'))
 
+    
     start_urls = [x + "/results" for x in df["jam_url"].tolist()]
 
-    # start_urls = ["https://itch.io/jam/awful-summer-jam-2018/results/community-choice"]
+    start_urls = [x + "/results" for x in df["jam_url"].tolist() 
+                    if "awful-summer-jam-2018" not in x
+                    and "hanks-jam" not in x
+                    and "awful-holiday-2018" not in x
+                    and "hardcore-punk-jam" not in x
+                    and "awful-summer-2019" not in x]
 
-    # https://itch.io/jam/awful-summer-2019/results/best-solo-entry
-    # https://itch.io/jam/leapmotion3djam        
-    # https://itch.io/jam/icantdraw/results    
+
+    ## NOTE - retrieved by criteria other than Overall
+    start_urls = start_urls + ["https://itch.io/jam/awful-summer-jam-2018/results/community-choice",
+                                "https://itch.io/jam/hanks-jam/results/youve-got-hanks-for-most-tom-hanks",
+                                "https://itch.io/jam/awful-holiday-2018/results/most-festive",
+                                "https://itch.io/jam/hardcore-punk-jam/results/fan-favourite",
+                                "https://itch.io/jam/awful-summer-2019/results/best-solo-entry"]
+
     print(start_urls)
 
     def parse(self, response):
@@ -54,18 +64,23 @@ class GamerankingSpider(scrapy.Spider):
         for game in response.css(".game_rank"):
 
             item = GameRankingCrawlerItem()
-            item['jam_url'] = response.url
-            print(item['jam_url'])
+            item['jam_result_page'] = response.url
+            item['jam_url'] = response.url[:response.url.find("/results")]
+        
+            JAM_NAME_SELECTOR = ".jam_title_header ::text"
+            item['jam_name'] = response.css(JAM_NAME_SELECTOR).extract_first()
 
             GAME_NAME_SELECTOR = ".game_summary ::text"
             GAME_URL_SELECTOR = ".game_summary a ::attr(href)"
             GAME_MADE_BY_SELECTOR = ".game_summary h3 a ::text"
+            GAME_DEVELOPERS_URL_SELECTOR = ".game_summary h3 a ::attr(href)"
             GAME_SUBMISSION_PAGE_SELECTOR = ".game_summary p a ::attr(href)"
 
             item['game_name'] = game.css(GAME_NAME_SELECTOR).extract_first()
             item['game_url'] = game.css(GAME_URL_SELECTOR).extract_first()
             item['game_submission_page_url'] = self.base_url + game.css(GAME_SUBMISSION_PAGE_SELECTOR).extract_first()
             item['game_developers'] = "||".join(game.css(GAME_MADE_BY_SELECTOR).extract())
+            item['game_developers_url'] = "||".join(game.css(GAME_DEVELOPERS_URL_SELECTOR).extract())
 
             # Obtain game rankings/scores/raw scores from table
             game_criteria = []

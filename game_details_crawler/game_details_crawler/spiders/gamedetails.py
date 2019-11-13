@@ -31,9 +31,9 @@ class GamedetailsSpider(scrapy.Spider):
 
     # start_urls = [game_url for game_url in df["game_url"].tolist()]
     start_urls = ['https://itch.io/login']
-    crawl_urls = ['https://dmullinsgames.itch.io/paper-jekyll', 
-                  'https://hunterkepley.itch.io/ice',
-                  'https://dj_pale.itch.io/unknown-grounds']
+    # crawl_urls = ['https://dmullinsgames.itch.io/paper-jekyll', 
+    #               'https://hunterkepley.itch.io/ice',
+    #               'https://dj_pale.itch.io/unknown-grounds']
     crawl_urls = [game_url for game_url in df["game_url"].tolist()]
 
     def parse(self, response):
@@ -89,6 +89,9 @@ class GamedetailsSpider(scrapy.Spider):
             if ("update" in row_key.lower()) or ("publish" in row_key.lower()) or ("release" in row_key.lower()):
                 print(row_key)
                 info[row_key] = row.css("abbr ::attr(title)").extract_first()
+            elif ("author" in row_key.lower()) or ("authors" in row_key.lower()):
+                info[row_key] = "||".join(row.xpath("td[2]/a/text()").extract())
+                info["Author's Url"] = "||".join(row.xpath("td[2]/a/@href").extract())
             else:
                 info[row_key] = "||".join(row.xpath("td[2]/a/text()").extract())
 
@@ -105,7 +108,9 @@ class GamedetailsSpider(scrapy.Spider):
         item["game_inputs"]          = info.get("Inputs", "")
         item["game_accessibility"]   = info.get("Accessibility", "")
         item["game_license"]         = info.get("License", "")
-        item["game_asset_license"]  = info.get("Asset license", "")
+        item["game_asset_license"]   = info.get("Asset license", "")
+        item["game_developers"]      = info.get("Author", info.get("Authors", ""))
+        item["game_developers_url"]  = info.get("Author's Url", "")
 
         # Download section
         UPLOAD_SELECTOR = ".upload"
@@ -116,7 +121,7 @@ class GamedetailsSpider(scrapy.Spider):
             upload_size = upload.css(".file_size ::text").extract_first(default = "")
             upload_name = upload.css(".upload_name .name ::text").extract_first()
             upload_platform = [plf.replace("Download for ", "") for plf in upload.css(".download_platforms *::attr(title)").extract()]
-            download_infos.append(upload_name + "|" + upload_size + "|" + upload_date + '|' + "|".join(upload_platform))
+            download_infos.append(upload_name + "||" + upload_size + "||" + upload_date + '||' + "||".join(upload_platform))
 
         item['game_size'] = "<>".join(download_infos)
 

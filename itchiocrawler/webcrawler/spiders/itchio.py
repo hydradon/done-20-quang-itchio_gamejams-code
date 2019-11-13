@@ -42,12 +42,14 @@ class ItchioSpider(scrapy.Spider):
             JAM_URL_SELECTOR = '.primary_info a ::attr(href)'
             JAM_NO_JOINED_SELECTOR = './/div[@class = "jam_stats"]/div/span/text()'
             JAM_NO_SUBMISSION_SELECTOR = './/div[@class = "jam_stats"]/a/span/text()'
+            JAM_HOST_SELECTOR = '.hosted_by a ::text'
 
             item['jam_name'] = jam.css(JAM_NAME_SELECTOR).extract_first(),
             item['jam_url'] = self.base_url + jam.css(JAM_URL_SELECTOR).extract_first()
             item['jam_no_joined'] = int(jam.xpath(JAM_NO_JOINED_SELECTOR).extract_first(default='0').replace(',', ''))
             item['jam_no_submissions'] = int(jam.xpath(JAM_NO_SUBMISSION_SELECTOR).extract_first(default='0').replace(',', ''))
-
+            item['jam_host'] = "||".join(jam.css(JAM_HOST_SELECTOR).extract())
+            
             request = scrapy.Request(item['jam_url'], callback=self.get_more_jam_details)
             request.meta['item'] = item #By calling .meta, we can pass our item object into the callback.
             yield request #Return the item + details back to the parser.
@@ -80,7 +82,20 @@ class ItchioSpider(scrapy.Spider):
         item = response.meta['item']
 
         JAM_CRITERIA_SELECTOR = '.criteria_sort_inner a ::text'
-        item['jam_criteria'] = "||".join(response.css(JAM_CRITERIA_SELECTOR).extract())
+        jam_criteria = "||".join(response.css(JAM_CRITERIA_SELECTOR).extract())
+        if not jam_criteria:
+            rankings = response.xpath('(.//table[@class="nice_table ranking_results_table"])[1]//tr')
+            criteria = []
+            for ranking in rankings[1:]:
+                criteria.append(ranking.xpath('.//td[1]/descendant-or-self::text()').extract_first())
+            item['jam_criteria'] = "||".join(criteria)
+
+
+            print("Here")
+            print(item['jam_criteria'])
+            # input(".......")
+        else:
+            item['jam_criteria'] = jam_criteria
         # print("Jam name {}".format(item['jam_name']))
         # print("Jam jam_criteria {}".format(item['jam_criteria']))
         # input("waiting for input...")
