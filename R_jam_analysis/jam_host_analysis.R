@@ -2,39 +2,63 @@ host_count <- read.csv("D:/ECE720 project/dataset/host_count_submissions.csv",
                        encoding = "UTF-8",
                        stringsAsFactors = FALSE)
 
+host_count <- host_count[order(-host_count$count),]
+top_host_plot <- top_n(host_count, n=5, count) %>% 
+  ggplot(., 
+         aes(x = reorder(X.U.FEFF.host, count), y = count))+ 
+  geom_bar(stat="identity", color = "darkgreen", fill="chartreuse4", width=0.5)+
+  labs(y = "# of jams")+
+  scale_x_discrete(labels = function(x) lapply(
+    strwrap(x, width = 15, 
+            simplify = FALSE),
+    paste,
+    collapse="\n")
+  )+
+  scale_y_continuous(breaks = round(seq(0,120, by = 20), 1))+
+  coord_flip()+
+  theme(panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.text=element_text(size=14),
+        axis.title = element_text(size=14),
+        axis.title.y=element_blank(),
+        axis.text.x=element_text(size = 14, hjust=1),
+        axis.text.y = element_text(hjust = 0.5, size = 14))
 
-host_count %>%
-  mutate(group = if_else(count < 10, "Others", X.U.FEFF.host)) %>%
-  group_by(group) %>%
-  summarize(avg = mean(count), count = n()) %>%
-  ungroup() %>%
-  mutate(group = if_else(group == "Others",
-                         paste0("Others (n =", count, ")"),
-                         group)) %>%
-  mutate(group = forcats::fct_reorder(group, avg)) %>%
-  ggplot() + 
-  geom_col(aes(group, avg)) +
-  geom_text(aes(group, avg, label = round(avg, 0)), hjust = -0.5) +
-  theme(axis.title.y=element_blank())+
-  ylab("Number of submissions")+
-  coord_flip()
 
-host_count %>%
-  mutate(group = if_else(total_submissions < 550, "Others", X.U.FEFF.host)) %>%
-  group_by(group) %>%
-  summarize(avg = mean(total_submissions), count = n()) %>%
-  ungroup() %>%
-  mutate(group = if_else(group == "Others",
-                         paste0("Others (n =", count, ")"),
-                         group)) %>%
-  mutate(group = forcats::fct_reorder(group, avg)) %>%
-  ggplot() + 
-  geom_col(aes(group, avg)) +
-  geom_text(aes(group, avg, label = round(avg, 0)), hjust = -0.5) +
-  theme(axis.title.y=element_blank())+
-  ylab("Number of submissions")+
-  coord_flip()
+host_submission <- host_count[order(-host_count$total_submissions),]
+top_host_submission_plot <- top_n(host_submission, n=5, total_submissions) %>% 
+  ggplot(., 
+         aes(x = reorder(X.U.FEFF.host, total_submissions), y = total_submissions))+ 
+  geom_bar(stat="identity", color = "darkgreen", fill="chartreuse4", width=0.5)+
+  # geom_text(data = host_submission[1, ], 
+  #           aes(label = total_submissions),
+  #           colour = "white",
+  #           size = 4,
+  #           vjust = 0.3, hjust = 2)+
+  # theme(axis.text.x=element_text(angle=0, hjust=1),
+  #       axis.title.y=element_blank(),
+  #       axis.text.y = element_text(hjust = 0.5, size = 10))+
+  labs(y = "# of submissions")+
+  scale_x_discrete(labels = function(x) lapply(
+    strwrap(x, width = 15, 
+            simplify = FALSE),
+    paste,
+    collapse="\n")
+  )+
+  coord_flip()+
+  theme(panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.text=element_text(size=14),
+        axis.title = element_text(size=14),
+        axis.title.y=element_blank(),
+        axis.text.x=element_text(size = 14, hjust=1),
+        axis.text.y = element_text(hjust = 0.5, size = 14))
 
+
+library(cowplot)
+plot_grid(top_host_plot, top_host_submission_plot)
+
+# drawing cdfs
 library(ggplot2)
 df_host <- as.data.frame(host_count)
 ggplot(df_host, aes(x=count))+ 
@@ -47,72 +71,7 @@ ggplot(df_host, aes(x=count))+
              color = "blue", size=0.5)
 
 
-# Creat bar chart for jam language
-library("ggplot2")  # Data visualization
-library("dplyr")    # Data manipulation
-library("RColorBrewer")
-myPalette <- brewer.pal(5, "Set2") 
 
 
-jam_languages <- data.frame(
-  Languages = c("English", "French", "Spanish", "Portuguese", "Others"),
-  n = c(81, 4, 3, 2, 3),
-  prop = c(87.1, 4.3, 3.2, 2.2, 3.2)
-)
 
-# Add label position
-jam_languages <-jam_languages %>%
-  arrange(desc(Languages)) %>%
-  # mutate(lab.ypos = cumsum(n) - 0.5*n)
-  mutate(end = 2 * pi * cumsum(prop)/sum(prop),
-       start = lag(end, default = 0),
-       middle = 0.5 * (start + end),
-       hjust = ifelse(middle > pi, 1, 0),
-       vjust = ifelse(middle < pi/2 | middle > 3 * pi/2, 0, 1))
-
-
-ggplot(jam_languages, aes(x = "", y = n, fill = Languages)) +
-  geom_bar(width = 1, stat = "identity", color = "white") +
-  coord_polar("y", start = 0)+
-  geom_text(aes(y = lab.ypos, label = n), color = "white")+
-  scale_fill_manual(values = myPalette) +
-  theme_void()
-
-lang = c("English", "French", "Spanish", "Portuguese", "Others")
-prop = c(87.1, 4.3, 3.2, 2.2, 3.2)
-pie(prop, labels = prop, main = "Jam languages",col = myPalette)
-legend("topright", lang, cex = 0.8,
-       fill = myPalette)
-
-
-ggplot(jam_languages) + 
-  geom_arc_bar(aes(x0 = 0, y0 = 0, r0 = 0, r = 1,
-                   start = start, end = end, fill = Languages)) +
-  geom_text(aes(x = 1.05 * sin(middle), y = 1.05 * cos(middle), label = prop,
-                hjust = hjust, vjust = vjust)) +
-  coord_fixed() +
-  scale_x_continuous(limits = c(-1.5, 1.4),  # Adjust so labels are not cut off
-                     name = "", breaks = NULL, labels = NULL) +
-  scale_y_continuous(limits = c(-1, 1),      # Adjust so labels are not cut off
-                     name = "", breaks = NULL, labels = NULL)
-
-
-par(mfrow=c(1,1), mai = c(0, 0.1, 0.5, 0.1))
-pie(1:5)
-pie(rep(1,5))
-
-
-library(RColorBrewer)
-Languages = c("English", "French", "Spanish", "Portuguese", "Others")
-n = c(81, 4, 3, 2, 3)
-prop = c("87.1", "4.3", "3.2", "2.2", "3.2")
-
-lbls <- paste(n, "(", sep = " ")
-lbls <- paste(lbls, prop, sep = "")
-lbls <- paste(lbls,"%",sep=" ")
-lbls <- paste(lbls,")",sep="")
-lgd <- c("English", "French", "Spanish", "Portuguese", "Others")
-cols = brewer.pal(n = length(prop), name = 'Set2')
-pie(n, labels = lbls, col=cols)
-legend("topright", legend=lgd, cex=1, bty = "y", fill = cols)
 

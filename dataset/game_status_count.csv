@@ -1,7 +1,7 @@
-﻿game_status,count
-in development,6958
-prototype,9826
-released,32175
-,806
-canceled,236
-on hold,411
+﻿game_status,count,percentage
+released,32073,63.973272165154086
+prototype,9824,19.59509324822978
+in development,6932,13.826667996409693
+canceled,236,0.47072903161464047
+on hold,408,0.8138027326219208
+,662,1.3204348259698813

@@ -4,10 +4,13 @@ import csv
 import os
 import sys
 
-df2 = pd.read_csv('dataset/non_competitive_game_details.csv')
-
 game_field = sys.argv[1]
-print("Counting game field: " + game_field)
+datafile = sys.argv[2]
+print("Counting game field: " + game_field + 
+      "\nin data file: " + datafile)
+
+df2 = pd.read_csv(datafile)
+total = len(df2)
 
 df2[game_field] = df2[game_field].replace(np.nan, '', regex=True)
 field_count = {}
@@ -19,7 +22,7 @@ for i, row in df2.iterrows():
             field_count[item] = 0      
         field_count[item] += 1  
 
-header = [game_field, "count"]
+header = [game_field, "count", "percentage"]
 
 output = "dataset/" + game_field + "_count.csv"
 if os.path.exists(output):
@@ -31,6 +34,7 @@ with open(output, 'w', encoding='utf-8-sig', newline='') as f:  # Just use 'w' m
     writer.writeheader()
     for key in field_count:
         writer.writerow({game_field: key, 
-                         'count': field_count[key]})
+                         'count': field_count[key],
+                         'percentage': field_count[key] * 100.0 / total})
 
 f.close()

@@ -10,10 +10,12 @@ write.csv(sample_non_competitive_jams, file = "non-competitive-jams-sample.csv",
 
 
 library(tidyverse)
-
+library(beanplot)
 summary(all_jams$jam_no_submissions)
 summary(competitive_jams$jam_no_submissions)
 summary(non_competitive_jams$jam_no_submissions)
+
+beanplot(competitive_jams$jam_no_submissions)
 
 boxplot(competitive_jams$jam_no_submissions ~ non_competitive_jams$jam_no_submissions)
 boxplot(non_competitive_jams$jam_no_submissions)

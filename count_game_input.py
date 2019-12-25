@@ -3,7 +3,7 @@ import numpy as np
 import csv
 import os
 
-df2 = pd.read_csv('dataset/non_competitive_game_details.csv')
+df2 = pd.read_csv('dataset/games_cleaned_before_encoding.csv')
 
 df2['game_inputs'] = df2['game_inputs'].replace(np.nan, '', regex=True)
 game_input_count = {}
@@ -20,7 +20,7 @@ print("========================")
 print(len(game_input_count))
 header = ["game_input", "count"]
 
-output = "dataset/game_input_count.csv"
+output = "dataset/sub_set_game_input_count.csv"
 if os.path.exists(output):
     os.remove(output)
 

@@ -179,6 +179,7 @@ class NoncompgamedetailsSpider(scrapy.Spider):
         item["game_asset_license"]   = info.get("Asset license", "")
         item["game_developers"]      = info.get("Author", info.get("Authors", ""))
         item["game_developers_url"]  = info.get("Author's Url", "")
+        item["game_multiplayer"]     = info.get("Multiplayer", "")
 
         # Download section
         UPLOAD_SELECTOR = ".upload"

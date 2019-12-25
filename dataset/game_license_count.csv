@@ -1,15 +1,15 @@
-﻿game_license,count
-,49492
-mit license,528
-unlicense,69
-gnu general public license v3.0 (gpl),193
-mozilla public license 2.0 (mpl),13
-apache license 2.0,42
-artistic license 2.0,16
-gnu general public license v2.0 (gpl),15
-gnu lesser general public license v2.1 (lgpl),3
-gnu lesser general public license v3.0 (lgpl),14
-zlib license,5
-bsd 2-clause 'simplified' license,10
-bsd 3-clause 'new' or 'revised' license,10
-eclipse public license v1.0 (epl),2
+﻿game_license,count,percentage
+,49214,98.16296000797846
+mit license,528,1.053156477510721
+unlicense,69,0.13762840331106013
+gnu general public license v3.0 (gpl),194,0.3869552209035604
+mozilla public license 2.0 (mpl),13,0.025929989029620026
+apache license 2.0,42,0.08377381071108009
+artistic license 2.0,16,0.03191383265184003
+gnu lesser general public license v2.1 (lgpl),3,0.005983843622220006
+zlib license,5,0.00997307270370001
+gnu lesser general public license v3.0 (lgpl),14,0.02792460357036003
+bsd 2-clause 'simplified' license,10,0.01994614540740002
+bsd 3-clause 'new' or 'revised' license,10,0.01994614540740002
+gnu general public license v2.0 (gpl),15,0.02991921811110003
+eclipse public license v1.0 (epl),2,0.003989229081480004

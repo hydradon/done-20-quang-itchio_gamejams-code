@@ -41,3 +41,4 @@ class NonCompGameDetailsCrawlerItem(scrapy.Item):
     game_scores = scrapy.Field()
     game_raw_scores = scrapy.Field()
     game_no_ratings = scrapy.Field()
+    game_multiplayer = scrapy.Field()
