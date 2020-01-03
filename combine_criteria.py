@@ -14,6 +14,7 @@ criteria_count = {}
 for i, row in df2.iterrows():
     criteria_count[row["criteria"]] = int(row["count"])
 
+
 criteria_copy = criteria_count.copy()
 # Combine all visual key:
 total = 0
