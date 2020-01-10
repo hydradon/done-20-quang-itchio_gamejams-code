@@ -1,4 +1,4 @@
-game_data_reduced <- read.csv("D:/Research/ECE720 project/dataset/games_cleaned_reduced.csv", 
+game_data_reduced <- read.csv("D:/Research/game-jam-crawler-model/dataset/games_cleaned_reduced.csv", 
                       encoding = "UTF-8" ,
                       stringsAsFactors = FALSE,
                       na.strings=c("","NA"))
@@ -16,7 +16,7 @@ game_data_reduced <- game_data_reduced[, c(3, 1:2, 4:ncol(game_data_reduced))]
 # Convert categorical variables to factors
 game_data_reduced <- data.frame(lapply(game_data_reduced, function(x) as.factor((x))))
 
-# Convert non-categorical variables back to numberic
+# Convert non-categorical variables back to numeric
 game_data_reduced$game_desc_len <- as.numeric(game_data_reduced$game_desc_len)
 game_data_reduced$game_no_screenshots  <- as.numeric(game_data_reduced$game_no_screenshots)
 game_data_reduced$number_of_developers <- as.numeric(game_data_reduced$number_of_developers)
@@ -149,11 +149,23 @@ roc_plot +
 
 
 # Logistic
+trControl_lr <- trainControl(classProbs = TRUE,
+                             # method = "cv",
+                             method = "repeatedcv",
+                             repeats = 3,
+                             number = 10, 
+                             search ="grid",
+                             savePredictions = TRUE,
+                             summaryFunction = twoClassSummary)
+
 model_reduced <- train(high_ranking ~ .,            
                    data = game_data_reduced,
-                   method = "glm",
+                   # method = "glm",
+                   method="glmStepAIC",
+                   direction ="backward",
                    family = "binomial",
-                   trControl = trControl)
+                   trControl = trControl_lr)
+
 roc_plot <- ggplot(model_reduced$pred, 
                    aes(m = Yes, d = factor(obs, levels = c("Yes", "No")))) + 
   geom_roc(labels=FALSE)
@@ -166,12 +178,12 @@ roc_plot +
 
 # Explanatory power of features
 library(car)
-# LR
-car::Anova(model_all$finalModel, test.statistic="Wald")
+car::Anova(model_reduced$finalModel, test.statistic="Wald")
 
-# RF
-varImp(rf_model_all)
+# Variable importance
+varImp(model_reduced)
+varImp(rf_model_reduced)
 
+# Coefficients and p-value
+summary(model_reduced)
 
-results <- resamples(list(GLM=model_all, RF=rf_model_all))
-plot(varImp(object=rf_model_all),main="RF - Variable Importance")

@@ -4,7 +4,7 @@ import os
 import numpy as np
 from natsort import index_natsorted, order_by_index
 import math
-import category_encoders as ce
+# import category_encoders as ce
 
 df_jams = pd.read_csv('dataset/jams-with-lang1.csv')
 df_games = pd.read_csv('dataset/all_games_details_cleaned.csv')
@@ -146,7 +146,7 @@ df_final.drop(cols, axis=1, inplace=True)
 # Reduced input attribute
 cols = [col for col in df_final.columns.values 
                     if col.startswith('input_') 
-                    and col.split('_')[1] not in ('Keyboard', 'Mouse', 'Touchscreen', 'Xbox controller', 'Gamepad (any)')]
+                    and col.split('_')[1] not in ('Keyboard', 'Mouse')]
 
 df_final['input_others'] = df_final[cols].any(axis=1).astype(int)
 df_final.drop(cols, axis=1, inplace=True)

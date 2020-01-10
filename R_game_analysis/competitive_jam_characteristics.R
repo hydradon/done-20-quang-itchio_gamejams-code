@@ -1,51 +1,5 @@
-# jam_desc <- read.csv("D:/Research/ECE720 project/dataset/jam_desc.csv", 
-#                               encoding = "UTF-8" ,
-#                               stringsAsFactors = FALSE,
-#                               na.strings=c("","NA"))
-# 
-# all_jams <- read.csv("D:/Research/ECE720 project/dataset/jams1.csv", 
-#                               encoding = "UTF-8" ,
-#                               stringsAsFactors = FALSE,
-#                               na.strings=c("","NA"))
-# 
-# 
-# 
-# library(tidyverse)
-# 
-# # Calculate jam duration
-# all_jams$duration <- as.numeric(difftime(parse_datetime(all_jams$jam_end_date, "%Y-%m-%d %H:%M:%S"),
-#                                          parse_datetime(all_jams$jam_start_date, "%Y-%m-%d %H:%M:%S"),
-#                                          units = "days"))
-# 
-# # filter jams that last less than 1 hour
-# all_jams <- subset(all_jams,  
-#                     as.numeric(difftime(parse_datetime(jam_end_date, "%Y-%m-%d %H:%M:%S"),
-#                                         parse_datetime(jam_start_date, "%Y-%m-%d %H:%M:%S"),
-#                                         units = "hours")) > 1)
-# 
-# all_jams <- all_jams %>% top_frac(1-0.01, -duration)
-# 
-# #Calculate number of hosts
-# all_jams$no_hosts <- lengths(strsplit(all_jams$jam_host, "\\|\\|"))
-# 
-# 
-# # Separate into competitive and non-competitive jam
-# non_competitive_jams <- subset(all_jams, is.na(all_jams$X.U.FEFF.jam_criteria))
-# competitive_jams <- subset(all_jams, !is.na(all_jams$X.U.FEFF.jam_criteria))
-# 
-# # Analysing competitive jam
-# competitive_jams_with_desc <- merge(competitive_jams, jam_desc, by = "jam_url")
-# competitive_jams_with_desc$no_criteria <- lengths(strsplit(competitive_jams_with_desc$X.U.FEFF.jam_criteria, "\\|\\|"))
-# competitive_jams_with_desc$no_hosts <- lengths(strsplit(competitive_jams_with_desc$jam_host, "\\|\\|"))
-# 
-# # MOdel
-
-
-
-
-
 # Ignore....
-competitive_jams <- read.csv("D:/Research/ECE720 project/dataset/competitive_jams_cleaned.csv",
+competitive_jams <- read.csv("D:/Research/game-jam-crawler-model/dataset/competitive_jams_cleaned.csv",
                               encoding = "UTF-8" ,
                               stringsAsFactors = FALSE,
                               na.strings=c("","NA"))
@@ -65,12 +19,16 @@ competitive_jams$jam_no_submissions <- NULL
 # reorder column
 competitive_jams <- competitive_jams[, c(7, 1:6)]
 
+# Add label to response variable
+competitive_jams$popular <- factor(competitive_jams$popular)
+
+
 
 library(Hmisc)
 # Correlation analysis tree
 clust <- varclus(data.matrix(competitive_jams[,2:ncol(competitive_jams)]))
 plot(clust)
-
+par(mar = c(0.1,4.4,0.3,0.1))
 
 # Redudancy analysis
 library(dplyr)
@@ -193,9 +151,20 @@ roc_plot +
 
 
 # Logistic
+trControl <- trainControl(classProbs = TRUE,
+                          # method = "cv",
+                          method = "repeatedcv",
+                          repeats = 3,
+                          number = 10, 
+                          search ="grid",
+                          savePredictions = TRUE,
+                          summaryFunction = twoClassSummary)
+
 lr_competitive_jam <- train(popular ~ .,            
                        data = competitive_jams,
-                       method = "multinom",
+                       method="glmStepAIC",
+                       direction ="backward",
+                       # method = "glm",
                        family = "binomial",
                        trControl = trControl)
 
@@ -211,38 +180,38 @@ roc_plot +
 
 
 # Logistic regression 2 # NOTE: this does not improve!!!
-lr_competitive_jam2 <- lrm(popular ~ ., 
-                           data = competitive_jams,
-                           x=TRUE, y=TRUE)
-lr_competitive_jam2_bootcov <- bootcov(lr_competitive_jam2, B=100)
-car::Anova(lr_competitive_jam2_bootcov, test.statistic="Wald")
-
-lrtest(lr_competitive_jam2_bootcov, "jam_duration") # 11.445  0.0007167 ***
-lrtest(lr_competitive_jam2_bootcov, "jam_desc_len") # 101.45  < 2.2e-16 ***
-lrtest(lr_competitive_jam2_bootcov, "jam_no_illustrations") # 21.116  4.322e-06 ***
-lrtest(lr_competitive_jam2_bootcov, "jam_no_videos") # 2.7305    0.09845 .
-lrtest(lr_competitive_jam2_bootcov, "num_hosts") # 24.853  6.186e-07 ***
-lrtest(lr_competitive_jam2_bootcov, "num_criteria") # 3.1713    0.07494 .
-
-library(rms)
-lr_competitive_jam_fastbw <- fastbw(lr_competitive_jam2_bootcov) #### Backward feature selection
-
-lr_competitive_jam2_final <- train(popular ~ jam_desc_len
-                                    + jam_no_illustrations
-                                    + num_hosts
-                                    + num_criteria,            
-                            data = competitive_jams,
-                            method = "multinom",
-                            family = "binomial",
-                            trControl = trControl)
-roc_plot <- ggplot(lr_competitive_jam2_final$pred, 
-                   aes(m = Yes, d = factor(obs, levels = c("Yes", "No")))) + 
-  geom_roc(labels=FALSE)
-roc_plot + 
-  style_roc(theme = theme_grey, ylab = "Sensitivity") +
-  annotate("text", x = .75, y = .25, 
-           label = paste("AUC =", round(calc_auc(roc_plot)$AUC, 2)))+
-  scale_x_continuous("1 - Specificity", breaks = seq(0, 1, by = .1))
+# lr_competitive_jam2 <- lrm(popular ~ ., 
+#                            data = competitive_jams,
+#                            x=TRUE, y=TRUE)
+# lr_competitive_jam2_bootcov <- bootcov(lr_competitive_jam2, B=100)
+# car::Anova(lr_competitive_jam2_bootcov, test.statistic="Wald")
+# 
+# lrtest(lr_competitive_jam2_bootcov, "jam_duration") # 11.445  0.0007167 ***
+# lrtest(lr_competitive_jam2_bootcov, "jam_desc_len") # 101.45  < 2.2e-16 ***
+# lrtest(lr_competitive_jam2_bootcov, "jam_no_illustrations") # 21.116  4.322e-06 ***
+# lrtest(lr_competitive_jam2_bootcov, "jam_no_videos") # 2.7305    0.09845 .
+# lrtest(lr_competitive_jam2_bootcov, "num_hosts") # 24.853  6.186e-07 ***
+# lrtest(lr_competitive_jam2_bootcov, "num_criteria") # 3.1713    0.07494 .
+# 
+# library(rms)
+# lr_competitive_jam_fastbw <- fastbw(lr_competitive_jam2_bootcov) #### Backward feature selection
+# 
+# lr_competitive_jam2_final <- train(popular ~ jam_desc_len
+#                                     + jam_no_illustrations
+#                                     + num_hosts
+#                                     + num_criteria,            
+#                             data = competitive_jams,
+#                             method = "multinom",
+#                             family = "binomial",
+#                             trControl = trControl)
+# roc_plot <- ggplot(lr_competitive_jam2_final$pred, 
+#                    aes(m = Yes, d = factor(obs, levels = c("Yes", "No")))) + 
+#   geom_roc(labels=FALSE)
+# roc_plot + 
+#   style_roc(theme = theme_grey, ylab = "Sensitivity") +
+#   annotate("text", x = .75, y = .25, 
+#            label = paste("AUC =", round(calc_auc(roc_plot)$AUC, 2)))+
+#   scale_x_continuous("1 - Specificity", breaks = seq(0, 1, by = .1))
 
 
 
@@ -255,7 +224,39 @@ car::Anova(lr_competitive_jam$finalModel, test.statistic="Wald")
 # Variable importance
 varImp(rf_competitive_jam)
 varImp(lr_competitive_jam)
-importance(rf_competitive_jam$finalModel)
+
+
+# Coefficient and p-value
+summary(lr_competitive_jam)
+
+# For nomogram analysis
+lr_competitive_jam_nomogram <- lrm(popular ~ .,   
+                                   # family = binomial,
+                                   data = competitive_jams,
+                                   )
+ddist <- datadist(competitive_jams)
+options(datadist='ddist')
+nom <- nomogram(lr_competitive_jam_nomogram,
+                # fun=function(x)1/(1+exp(-x)),
+                fun=plogis,
+                fun.at=c(0.1, 0.5, 
+                         # 0.9, 0.99,
+                         0.999),
+                # conf.int=c(0.1,0.7),
+                abbrev = TRUE,
+                lp=F,
+                funlabel = "Popularity")
+plot(nom,
+     # col.conf=c('red','green'),
+     # conf.space=c(0.1,0.2),
+     label.every=1,
+     fun.side=c(1,3,1
+                # 3,1
+                ),
+     lmgp = 0.15,
+     # col.grid = gray(c(0.8, 0.95)),
+     xfrac=.45
+)
 
 
 # Dive deeper............
@@ -270,6 +271,16 @@ wilcox.test(popular_competitive_jams$jam_desc_len,
             unpopular_competitive_jams$jam_desc_len, alternative = "greater")
 cliff.delta(popular_competitive_jams$jam_desc_len, unpopular_competitive_jams$jam_desc_len)
 
+comp.dist.plot(log(popular_competitive_jams$jam_desc_len + 1), 
+               log(unpopular_competitive_jams$jam_desc_len + 1),
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topleft",
+               cut = FALSE)
+
+effsize.range.plot(log(popular_competitive_jams$jam_desc_len + 1),
+                   log(unpopular_competitive_jams$jam_desc_len + 1))
+
 # Comparing durations
 summary(popular_competitive_jams$jam_duration)
 summary(unpopular_competitive_jams$jam_duration)
@@ -277,12 +288,30 @@ wilcox.test(popular_competitive_jams$jam_duration,
             unpopular_competitive_jams$jam_duration, alternative = "less")
 cliff.delta(popular_competitive_jams$jam_duration, unpopular_competitive_jams$jam_duration)
 
+comp.dist.plot(popular_competitive_jams$jam_duration, 
+               unpopular_competitive_jams$jam_duration,
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topleft",
+               # xlab = "Median jam duration (in log scale)",
+               cut = FALSE)
+
 # Comparing number of illustrations
 summary(popular_competitive_jams$jam_no_illustrations)
 summary(unpopular_competitive_jams$jam_no_illustrations)
 wilcox.test(popular_competitive_jams$jam_no_illustrations, 
             unpopular_competitive_jams$jam_no_illustrations, alternative = "greater")
-cliff.delta(popular_competitive_jams$jam_no_illustrations, unpopular_competitive_jams$jam_no_illustrations)
+cliff.delta(popular_competitive_jams$jam_no_illustrations,
+            unpopular_competitive_jams$jam_no_illustrations)
+
+comp.dist.plot(popular_competitive_jams$jam_no_illustrations, 
+               unpopular_competitive_jams$jam_no_illustrations,
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topright",
+               xlab = "Median number of illustrations",
+               cut = FALSE)
+
 
 # Comparing number of videos
 summary(popular_competitive_jams$jam_no_videos)
@@ -290,6 +319,14 @@ summary(unpopular_competitive_jams$jam_no_videos)
 wilcox.test(popular_competitive_jams$jam_no_videos, 
             unpopular_competitive_jams$jam_no_videos, alternative = "greater")
 cliff.delta(popular_competitive_jams$jam_no_videos, unpopular_competitive_jams$jam_no_videos)
+
+comp.dist.plot(popular_competitive_jams$jam_no_videos, 
+               unpopular_competitive_jams$jam_no_videos,
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topright",
+               xlab = "Median number of videos",
+               cut = FALSE)
 
 
 # Comparing number of hosts
@@ -299,6 +336,14 @@ wilcox.test(popular_competitive_jams$num_hosts,
             unpopular_competitive_jams$num_hosts, alternative = "greater")
 cliff.delta(popular_competitive_jams$num_hosts, unpopular_competitive_jams$num_hosts)
 
+comp.dist.plot(popular_competitive_jams$num_hosts, 
+               unpopular_competitive_jams$num_hosts,
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topright",
+               xlab = "Median number of hosts",
+               cut = FALSE)
+
 # Comparing number of criteria
 summary(popular_competitive_jams$num_criteria)
 summary(unpopular_competitive_jams$num_criteria)
@@ -306,6 +351,14 @@ wilcox.test(popular_competitive_jams$num_criteria,
             unpopular_competitive_jams$num_criteria, alternative = "greater")
 cliff.delta(popular_competitive_jams$num_criteria, unpopular_competitive_jams$num_criteria)
 
+comp.dist.plot(popular_competitive_jams$num_criteria, 
+               unpopular_competitive_jams$num_criteria,
+               legend1 = "Popular jams",
+               legend2 = "Non-popular jams",
+               legendpos = "topleft",
+               xlab = "Median number of criteria (in log scale)",
+               cut = FALSE)
+summary(competitive_jams$num_criteria)
 
 
 

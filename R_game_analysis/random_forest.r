@@ -15,8 +15,8 @@ game_data$input_NeuroSky.Mindwave <- NULL
 # Redudancy analysis
 library(dplyr)
 game_data[!names(game_data) %in%  c("high_ranking")]%>% 
-  redun(~., data=., r2=.8, nk=0, 
-        minfreq=40,
+  redun(~., data=., r2=0.8, nk=0, 
+        # minfreq=40,
         allcat=TRUE)
 
 
@@ -100,6 +100,17 @@ rf_model_all <- train(high_ranking ~ .,
                       nodesize = 14,
                       ntree = 100)
 
+# actual
+rf_model_all <- train(high_ranking ~ .,            
+                      data = game_data,
+                      method = "rf",
+                      tuneGrid = tuneGrid,
+                      trControl = trControl_boot,
+                      importance = TRUE,
+                      maxnodes = 30,
+                      nodesize = 14,
+                      ntree = 100)
+
 
 # plot ROC
 library(ggplot2)
@@ -119,37 +130,50 @@ roc_plot +
 
 
 # Logistic
+trControl_lr <- trainControl(classProbs = TRUE,
+                          method = "cv",
+                          # method = "repeatedcv",
+                          # repeats = 1,
+                          number = 10, 
+                          search ="grid",
+                          savePredictions = TRUE,
+                          summaryFunction = twoClassSummary)
+
 model_all <- train(high_ranking ~ .,            
                    data = game_data,
-                   method = "glm",
+                   # method = "glm",
+                   method="glmStepAIC",
+                   direction ="backward",
                    family = "binomial",
-                   trControl = trControl)
+                   trControl = trControl_lr)
+
 roc_plot <- ggplot(model_all$pred, 
                    aes(m = Yes, d = factor(obs, levels = c("Yes", "No")))) + 
   geom_roc(labels=FALSE)
-roc_plot + 
+roc_plot +  
   style_roc(theme = theme_grey, ylab = "Sensitivity") +
   annotate("text", x = .75, y = .25, 
            label = paste("AUC =", round(calc_auc(roc_plot)$AUC, 2)))+
   scale_x_continuous("1 - Specificity", breaks = seq(0, 1, by = .1))
 
-# Backward feature selection
+
+# Backward feature selection NOT WORKING
 library(rms)
 model_all_fastbw <- fastbw(model_all$finalModel)
 
 
 # Explanatory power of features
 library(car)
-# LR
 car::Anova(model_all$finalModel, test.statistic="Wald")
 
 
-# RF
+# Variable importance
 varImp(rf_model_all)
-results <- resamples(list(GLM=model_all, RF=rf_model_all))
-plot(varImp(object=rf_model_all),main="RF - Variable Importance")
+varImp(model_all)
 
-
+# Coefficients and p-values
+summary(model_all)
+summary(rf_model_all$finalModel)
 
 # Dive deeper............
 library(effsize)
@@ -164,6 +188,14 @@ wilcox.test(high_ranking_games$game_desc_len,
 cliff.delta(high_ranking_games$game_desc_len, 
             low_ranking_games$game_desc_len)
 
+comp.dist.plot(high_ranking_games$game_desc_len, 
+                     low_ranking_games$game_desc_len,
+                     legend1 = "High-ranking games",
+                     legend2 = "Low-ranking games",
+                     legendpos = "topright",
+                     xlab = "Median description length",
+                      cut = FALSE)
+
 
 # Comparing number of screenshots
 summary(high_ranking_games$game_no_screenshots)
@@ -173,6 +205,15 @@ wilcox.test(high_ranking_games$game_no_screenshots,
 cliff.delta(high_ranking_games$game_no_screenshots, 
             low_ranking_games$game_no_screenshots)
 
+comp.dist.plot(high_ranking_games$game_no_screenshots, 
+                    low_ranking_games$game_no_screenshots,
+                    legend1 = "High-ranking games",
+                    legend2 = "Low-ranking games",
+                    legendpos = "topright",
+                    xlab = "Median number of screenshots",
+                    cut = FALSE)
+
+
 
 # Comparing number of developers
 summary(high_ranking_games$number_of_developers)
@@ -181,3 +222,37 @@ wilcox.test(high_ranking_games$number_of_developers,
             low_ranking_games$number_of_developers, alternative = "greater")
 cliff.delta(high_ranking_games$number_of_developers, 
             low_ranking_games$number_of_developers)
+
+comp.dist.plot(high_ranking_games$number_of_developers, 
+               low_ranking_games$number_of_developers,
+               legend1 = "High-ranking games",
+               legend2 = "Low-ranking games",
+               legendpos = "topright",
+               xlab = "Median number of developers",
+               cut = FALSE)
+
+
+# Comparing platform_Windows
+summary(high_ranking_games$platform_Windows)
+summary(low_ranking_games$platform_Windows)
+wilcox.test(as.numeric(high_ranking_games$platform_Windows), 
+            as.numeric(low_ranking_games$platform_Windows), alternative = "two.sided")
+cliff.delta(as.numeric(high_ranking_games$platform_Windows), 
+            as.numeric(low_ranking_games$platform_Windows))
+
+# Comparing platform_HTML5
+summary(high_ranking_games$platform_HTML5)
+summary(low_ranking_games$platform_HTML5)
+wilcox.test(as.numeric(high_ranking_games$platform_HTML5), 
+            as.numeric(low_ranking_games$platform_HTML5), alternative = "two.sided")
+cliff.delta(as.numeric(high_ranking_games$platform_HTML5), 
+            as.numeric(low_ranking_games$platform_HTML5))
+
+# Comparing aveSession_A.few.minutes
+summary(high_ranking_games$aveSession_A.few.minutes)
+summary(low_ranking_games$aveSession_A.few.minutes)
+wilcox.test(as.numeric(high_ranking_games$aveSession_A.few.minutes), 
+            as.numeric(low_ranking_games$aveSession_A.few.minutes), alternative = "two.sided")
+cliff.delta(as.numeric(high_ranking_games$aveSession_A.few.minutes), 
+            as.numeric(low_ranking_games$aveSession_A.few.minutes))
+

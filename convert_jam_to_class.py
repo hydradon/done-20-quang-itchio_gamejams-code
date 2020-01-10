@@ -4,7 +4,6 @@ import os
 import numpy as np
 from natsort import index_natsorted, order_by_index
 import math
-import category_encoders as ce
 
 df_jams = pd.read_csv('dataset/jams-with-lang1.csv')
 df_jam_desc = pd.read_csv('dataset/jam_desc_x.csv')
