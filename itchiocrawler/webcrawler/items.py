@@ -17,6 +17,5 @@ class WebcrawlerItem(scrapy.Item):
     jam_start_date = scrapy.Field()
     jam_end_date = scrapy.Field()
     jam_no_rating = scrapy.Field()
-    # jam_community_activity = scrapy.Field()
     jam_criteria = scrapy.Field()
     jam_host = scrapy.Field()
