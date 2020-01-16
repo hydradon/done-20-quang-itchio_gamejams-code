@@ -22,7 +22,7 @@ class GamerankingSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams1.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams.csv'))
 
     
     start_urls = [x + "/results" for x in df["jam_url"].tolist()]

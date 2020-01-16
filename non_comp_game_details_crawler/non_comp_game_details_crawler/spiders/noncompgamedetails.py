@@ -30,7 +30,7 @@ class NoncompgamedetailsSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams1.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams.csv'))
     # df['jam_criteria'] = df['jam_criteria'].replace(np.nan, '', regex=True)
     # df = df[df['jam_criteria'].map(len) == 0]
 
@@ -42,8 +42,8 @@ class NoncompgamedetailsSpider(scrapy.Spider):
         token = response.xpath('//*[@name="csrf_token"]/@value').extract_first()
         return [scrapy.FormRequest.from_response(response,
                                                  formdata={'csrf_token': token,
-                                                           'password': 'nosalis9)',
-                                                           'username': 'hydradon'},
+                                                           'password': '', #TODO use own usename and pass!
+                                                           'username': ''},
                                                  formcss='.login_form_widget .form',
                                                  callback=self.check_login_response)]
 

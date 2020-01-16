@@ -27,14 +27,16 @@ competitive_jams$popular <- factor(competitive_jams$popular)
 library(Hmisc)
 # Correlation analysis tree
 clust <- varclus(data.matrix(competitive_jams[,2:ncol(competitive_jams)]))
-plot(clust)
-par(mar = c(0.1,4.4,0.3,0.1))
+plot(clust, sub = test)
+title(main="My Title", col.main="red",
+      sub="My Sub-title")
+par(mar = c(3,4.4,0.3,0.1))
 
 # Redudancy analysis
 library(dplyr)
 competitive_jams[!names(competitive_jams) %in%  c("Popular")]%>% 
   redun(~., data=., r2=.8, nk=0, 
-        minfreq=40,
+        # minfreq=40,
         allcat=TRUE)
 
 # random forest
@@ -44,9 +46,9 @@ library(e1071)
 
 trControl <- trainControl(classProbs = TRUE,
                           # method = "cv",
-                          method = "repeatedcv",
-                          repeats = 3,
-                          number = 10, 
+                          method = "boot",
+                          # repeats = 3,
+                          number = 100, 
                           search ="grid",
                           savePredictions = TRUE,
                           summaryFunction = twoClassSummary)
@@ -105,7 +107,7 @@ results_tree <- resamples(store_maxtrees)
 summary(results_tree)
 
 # actual
-rf_competitive_jam <- train(Popular ~ .,            
+rf_competitive_jam <- train(popular ~ .,            
                           data = competitive_jams,
                           method = "rf",
                           tuneGrid = tuneGrid_competitive_jam,
@@ -297,8 +299,8 @@ comp.dist.plot(popular_competitive_jams$jam_duration,
                cut = FALSE)
 
 # Comparing number of illustrations
-summary(popular_competitive_jams$jam_no_illustrations)
-summary(unpopular_competitive_jams$jam_no_illustrations)
+summary(popular_competitive_jams$num_imgs)
+summary(unpopular_competitive_jams$num_imgs)
 wilcox.test(popular_competitive_jams$jam_no_illustrations, 
             unpopular_competitive_jams$jam_no_illustrations, alternative = "greater")
 cliff.delta(popular_competitive_jams$jam_no_illustrations,
@@ -312,6 +314,8 @@ comp.dist.plot(popular_competitive_jams$jam_no_illustrations,
                xlab = "Median number of illustrations",
                cut = FALSE)
 
+x <- subset(competitive_jams, num_imgs > 0)
+summary(x$popular)
 
 # Comparing number of videos
 summary(popular_competitive_jams$jam_no_videos)
@@ -343,6 +347,9 @@ comp.dist.plot(popular_competitive_jams$num_hosts,
                legendpos = "topright",
                xlab = "Median number of hosts",
                cut = FALSE)
+
+x <- subset(competitive_jams, num_hosts > 1)
+summary(x$popular)
 
 # Comparing number of criteria
 summary(popular_competitive_jams$num_criteria)

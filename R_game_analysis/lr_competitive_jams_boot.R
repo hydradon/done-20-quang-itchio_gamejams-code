@@ -36,7 +36,7 @@ competitive_jams$num_imgs<-log(competitive_jams$num_imgs + 1)
 competitive_jams$num_criteria<-log(competitive_jams$num_criteria + 1)
 competitive_jams$num_hosts<-log(competitive_jams$num_hosts + 1)
 
-
+library(caret)
 # Model building
 trControl_boot <- trainControl(classProbs = TRUE,
                                method = "boot",
@@ -50,8 +50,14 @@ lr_competitive_jam_boot <- train(popular ~ .,
                             family = "binomial",
                             trControl = trControl_boot)
 
+lr_competitive_jam_boot_condensed <- train(popular ~ duration + desc_len + num_imgs + num_hosts,            
+                                 data = competitive_jams,
+                                 method = "glm",
+                                 family = "binomial",
+                                 trControl = trControl_boot)
+
 # Drawing ROC
-roc_plot <- ggplot(lr_competitive_jam_boot$pred, 
+roc_plot <- ggplot(lr_competitive_jam_boot_condensed$pred, 
                    aes(m = Yes, d = factor(obs, levels = c("Yes", "No")))) + 
   geom_roc(labels=FALSE)
 roc_plot + 
@@ -73,11 +79,14 @@ varImp(lr_competitive_jam_boot$finalModel)
 competitive_jams$num_hosts <- round(competitive_jams$num_hosts,2)
 competitive_jams$num_vids <- round(competitive_jams$num_vids,2)
 
-lr_competitive_jam_boot_nomogram <- lrm(popular ~ 
-                                          duration + desc_len
-                                          + num_vids + num_criteria
-                                          + num_imgs + num_hosts,   
+lr_competitive_jam_boot_nomogram <- lrm(popular ~
+                                          duration + desc_len + num_imgs + num_hosts, x=TRUE, y=TRUE,
+                                          # duration + desc_len
+                                          # + num_vids + num_criteria
+                                          # + num_imgs + num_hosts,   
                                    data = competitive_jams)
+
+CalculateAucFromDxy(validate(lr_competitive_jam_boot_nomogram,B=100))
 ddist <- datadist(competitive_jams)
 options(datadist='ddist')
 nom <- nomogram(lr_competitive_jam_boot_nomogram,

@@ -1,26 +1,3 @@
-non_competitive_jams <- read.csv("D:/Research/game-jam-crawler-model/dataset/non_competitive_jams_cleaned.csv",
-                             encoding = "UTF-8" ,
-                             stringsAsFactors = FALSE,
-                             na.strings=c("","NA"))
-non_competitive_jams$X.U.FEFF.jam_criteria <- NULL
-non_competitive_jams$jam_end_date <- NULL
-non_competitive_jams$jam_start_date <- NULL
-
-non_competitive_jams$jam_host <- NULL
-non_competitive_jams$jam_name_x <- NULL
-non_competitive_jams$jam_name_y <- NULL
-non_competitive_jams$jam_no_joined <- NULL
-non_competitive_jams$jam_no_rating <- NULL
-non_competitive_jams$jam_url <- NULL
-non_competitive_jams$jam_english <- NULL
-non_competitive_jams$jam_no_submissions <- NULL
-
-# reorder column
-non_competitive_jams <- non_competitive_jams[, c(6, 1:5)]
-
-# Add label to response variable
-non_competitive_jams$popular <- factor(non_competitive_jams$popular)
-
 
 library(Hmisc)
 # Correlation analysis tree
@@ -42,9 +19,9 @@ library(e1071)
 
 trControl <- trainControl(classProbs = TRUE,
                           # method = "cv",
-                          method = "repeatedcv",
-                          repeats = 3,
-                          number = 10, 
+                          method = "boot",
+                          # repeats = 3,
+                          number = 100, 
                           search ="grid",
                           savePredictions = TRUE,
                           summaryFunction = twoClassSummary)
@@ -255,12 +232,12 @@ comp.dist.plot(popular_non_competitive_jams$jam_duration,
                cut = FALSE)
 
 # Comparing number of illustrations
-summary(popular_non_competitive_jams$jam_no_illustrations)
-summary(unpopular_non_competitive_jams$jam_no_illustrations)
-wilcox.test(popular_non_competitive_jams$jam_no_illustrations, 
-            unpopular_non_competitive_jams$jam_no_illustrations, alternative = "greater")
-cliff.delta(popular_non_competitive_jams$jam_no_illustrations, 
-            unpopular_non_competitive_jams$jam_no_illustrations)
+summary(popular_non_competitive_jams$num_imgs)
+summary(unpopular_non_competitive_jams$num_imgs)
+wilcox.test(popular_non_competitive_jams$num_imgs, 
+            unpopular_non_competitive_jams$num_imgs, alternative = "greater")
+cliff.delta(popular_non_competitive_jams$num_imgs, 
+            unpopular_non_competitive_jams$num_imgs)
 
 comp.dist.plot(popular_non_competitive_jams$jam_no_illustrations, 
                unpopular_non_competitive_jams$jam_no_illustrations,
@@ -270,6 +247,8 @@ comp.dist.plot(popular_non_competitive_jams$jam_no_illustrations,
                xlab = "Median jam duration (in log scale)",
                cut = FALSE)
 
+x <- subset(non_competitive_jams, num_imgs > 0)
+summary(x$popular)
 
 
 # Comparing number of videos
@@ -304,6 +283,11 @@ comp.dist.plot(popular_non_competitive_jams$num_hosts,
                legendpos = "topleft",
                xlab = "Median jam duration (in log scale)",
                cut = FALSE)
+
+
+x <- subset(non_competitive_jams, num_hosts > 1)
+summary(x$popular)
+
 
 wilcox.test(competitive_jams$jam_no_submissions, 
             non_competitive_jams$jam_no_submissions, alternative = "greater")

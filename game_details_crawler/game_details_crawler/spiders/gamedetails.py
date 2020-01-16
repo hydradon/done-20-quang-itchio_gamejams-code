@@ -40,8 +40,8 @@ class GamedetailsSpider(scrapy.Spider):
         token = response.xpath('//*[@name="csrf_token"]/@value').extract_first()
         return [scrapy.FormRequest.from_response(response,
                                                  formdata={'csrf_token': token,
-                                                           'password': 'nosalis9)',
-                                                           'username': 'hydradon'},
+                                                           'password': 'pass',  # TODO: use own user name and password
+                                                           'username': 'username'},
                                                  formcss='.login_form_widget .form',
                                                  callback=self.check_login_response)]
 
