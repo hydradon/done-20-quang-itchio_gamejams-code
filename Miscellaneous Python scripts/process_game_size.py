@@ -2,7 +2,7 @@ import pandas as pd
 import io
 import os
 
-df = pd.read_csv('../dataset/all_game_details.csv')
+df = pd.read_csv('../dataset/all_game_details_cleaned.csv')
 df.dropna(subset=['game_size'], inplace = True) # process game with size only
 print("Number of games with size: {}".format(len(df)))
 
