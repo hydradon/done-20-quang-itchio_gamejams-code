@@ -96,6 +96,9 @@ python ./Python_scripts/selecting_games_for_models.py
 ## 1. Jams analysis
 Dataset used: [competitive_jams_cleaned.csv](./dataset/competitive_jams_cleaned.csv) and [non_competitive_jams_cleaned.csv](./dataset/non_competitive_jams_cleaned.csv)
 
+R scripts:
+- 
+
 
 ## 2. Games analysis
 
