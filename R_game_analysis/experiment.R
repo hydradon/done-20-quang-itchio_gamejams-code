@@ -1,4 +1,4 @@
-game_data_bef_encoding <- read.csv("D:/ECE720 project/dataset/games_cleaned_before_encoding.csv", 
+game_data_bef_encoding <- read.csv("D:/Research/game-jam-crawler-model/dataset/games_cleaned_before_encoding.csv", 
                                    encoding = "UTF-8" ,
                                    stringsAsFactors = FALSE,
                                    na.strings=c("","NA"))
@@ -70,9 +70,6 @@ train <- game_data[1:7036,]
 test <- game_data[7037:7818,]
 
 
-table(test$high_ranking)
-str(game_data)
-
 library(Hmisc)
 # Correlation analysis tree
 clust <- varclus(data.matrix(game_data[,2:ncol(game_data)]))
@@ -126,8 +123,6 @@ model_all <- train(high_ranking ~ .,
                     family = "binomial",
                     trControl = train.control)
 
-print(model_some)
-
 # using glm to fill all
 glm_fit_all <- glm(
   high_ranking ~ .,
@@ -135,9 +130,6 @@ glm_fit_all <- glm(
   family = binomial
 )
 
-anova(glm_fit_all, test="Chisq")
-
-bc_glm_fit_all <- bootcov(glm_fit_all, B=100, pr=TRUE)
 
 library(car)
 car::Anova(glm_fit_all, test.statistic="Wald")
@@ -240,8 +232,6 @@ test_plot
         axis.text.y = element_text(hjust = 0.5, size = 9))
  
 
-
-
 roc_plot <- ggplot(data.frame("predictions" = glm.probs, 
                               "labels" = test$high_ranking), 
                    aes(m = predictions, d = labels))+
@@ -253,83 +243,3 @@ roc_plot +
   annotate("text", x = .75, y = .25, 
            label = paste("AUC =", round(calc_auc(roc_plot)$AUC, 2)))+
   scale_x_continuous("1 - Specificity", breaks = seq(0, 1, by = .1))
-
-
-
-
-
-# experiment
-mtcars
-mtc <- mtcars[,2:8]
-mtcn <- data.matrix(mtc)
-clust <- varclus(mtcn)
-clust
-plot(clust)
-
-
-
-set.seed(1)
-n <- 100
-x1 <- runif(n)
-x2 <- runif(n)
-x3 <- x1 + x2 + runif(n)/10
-x4 <- x1 + x2 + x3 + runif(n)/10
-x5 <- factor(sample(c('a','b','c'),n,replace=TRUE))
-x6 <- 1*(x5=='a' | x5=='c')
-
-test_df <- data.frame("x1" = x1,
-                      "x2" = x2,
-                      "x3" = x3,
-                      "x4" = x4,
-                      "x5" = x5,
-                      "x6" = x6)
-library(dplyr)
-test_df %>% redun(x1~., data=., r2=.8)
-
-redun(~x1+x2+x3+x4+x5+x6, r2=.8, minfreq=40)
-redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
-
-x7 <- factor(x6)
-summary(x5)
-summary(x7)
-
-
-
-set.seed(2529)
-D.ex <- rbinom(200, size = 1, prob = .5)
-M1 <- rnorm(200, mean = D.ex, sd = .65)
-M2 <- rnorm(200, mean = D.ex, sd = 1.5)
-
-test <- data.frame(D = D.ex, D.str = c("Healthy", "Ill")[D.ex + 1], 
-                   M1 = M1, M2 = M2, stringsAsFactors = FALSE)
-basicplot <- ggplot(test, aes(d = D, m = M1)) + geom_roc()
-
-basicplot + 
-  style_roc(theme = theme_grey) +
-  theme(axis.text = element_text(colour = "blue")) +
-  ggtitle("Themes and annotations") + 
-  annotate("text", x = .75, y = .25, 
-           label = paste("AUC =", round(calc_auc(basicplot)$AUC, 2))) +
-  scale_x_continuous("1 - Specificity", breaks = seq(0, 1, by = .1))
-        
-
-
-# random forest
-library(randomForest)
-library(caret)
-library(e1071)
-
-tuneGrid <- expand.grid(.mtry = c(1: 10))
-trControl <- trainControl(method = "cv", number = 10, search ="grid", classProbs = TRUE)
-rf_model_all <- train(high_ranking ~ .,            
-                   data = game_data,
-                   method = "rf",
-                   metric = "Accuracy",
-                   tuneGrid = tuneGrid,
-                   trControl = trControl,
-                   importance = TRUE,
-                   nodesize = 14,
-                   ntree = 100)
-
-store_maxnode <- list()
-tuneGrid <- expand.grid(.mtry = 10)

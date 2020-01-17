@@ -9,10 +9,7 @@ colnames(game_data)[colnames(game_data)=="aveSession_A.few.minutes"] <- "avgSess
 colnames(game_data)[colnames(game_data)=="madeWith_GameMaker..Studio"] <- "madeWith_GameMaker.Studio"    
 
 game_data[is.na(game_data)] <- 0
-# game_data$high_ranking <- game_data$high_ranking=="1"
-# game_data$high_ranking <- factor(game_data$high_rankin/g)
-
-game_data$overall_rank <- NULL
+game_data$high_ranking <- factor(game_data$high_ranking)
 
 # reorder column
 game_data <- game_data[, c(3, 1:2, 4:ncol(game_data))]
@@ -37,9 +34,5 @@ game_data$num_platforms<-log(game_data$num_platforms + 1)
 game_data$num_genres<-log(game_data$num_genres + 1)
 game_data$num_inputs<-log(game_data$num_inputs + 1)
 game_data$num_madeWiths<-log(game_data$num_madeWiths + 1)
-
-
-# Add label to response variable
-game_data$high_ranking <- factor(game_data$high_ranking)
 
                         

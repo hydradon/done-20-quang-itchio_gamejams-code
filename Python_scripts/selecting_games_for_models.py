@@ -7,8 +7,6 @@ import math
 # import category_encoders as ce
 
 # df_jams = pd.read_csv('../dataset/jams-with-lang1.csv')
-# df_games = pd.read_csv('../dataset/all_games_details_cleaned.csv')
-
 df_jams = pd.read_csv('../dataset/jams.csv')
 df_games = pd.read_csv('../dataset/all_games_details_cleaned.csv')
 
@@ -200,6 +198,7 @@ df_final.drop(["jam_name",
                "game_accessibility",
                "game_ave_session",
                "game_source_code",
+               "overall_rank"
                ], 
               axis=1, inplace=True) 
 

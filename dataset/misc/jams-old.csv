@@ -1,7 +1,7 @@
 ﻿jam_criteria,jam_end_date,jam_host,jam_name,jam_no_joined,jam_no_rating,jam_no_submissions,jam_start_date,jam_url
 ,2016-11-14 12:00:00,Cut Garnet Games,Procedural Generation Jam 2016,917,0,163,2016-11-05 00:00:00,https://www.itch.io/jam/procjam2016
 ,2018-08-20 05:00:00,Extra Credits,The Very First Extra Credits Game Design Jam!,1159,0,320,2018-08-17 03:00:00,https://www.itch.io/jam/extra-credits-game-design-jam
-Overall||Design||Adherence to the Theme||Originality,2019-08-04 21:00:00,Game Maker's Toolkit,GMTK Game Jam 2019,7591,46600,2620,2019-08-02 19:00:00,https://www.itch.io/jam/gmtk-2019
+Overall||Design||Adherence to the Theme||Originality,2019-08-04 21:00:00,Game Maker's Toolkit,GMTK Game Jam 2019,7591,46.6k,2620,2019-08-02 19:00:00,https://www.itch.io/jam/gmtk-2019
 Overall||Use of Theme||Visual Fidelity||Fun,2018-11-15 19:00:00,unrealengine,2018 Epic MegaJam,1011,0,200,2018-11-08 20:00:00,https://www.itch.io/jam/2018-epic-megajam
 OVERALL||THEME||VISUALS||INNOVATION||THE EXPERIENCE||SOUNDS AND MUSIC,2018-10-20 10:00:00,Blackthornprod Games,Blackthornprod GAME JAM # 1,1045,9002,237,2018-10-13 10:00:00,https://www.itch.io/jam/blackthornprod-game-jam-1
 Overall||Theme||Visuals||Innovation||The Experience||Sounds and Music,2019-03-02 16:30:00,Blackthornprod Games,Blackthornprod GAME JAM #2,1072,1626,266,2019-02-23 11:00:00,https://www.itch.io/jam/blackthornprodgamejam2
@@ -14,7 +14,7 @@ People's Choice Vote||YouTuber's Choice||Degica's Choice,2018-11-30 07:59:59,ndu
 Overall||Game Design||Fun||Innovation||Theme||Graphics||Audio,2019-02-23 08:00:00,CodeMyst,Brackeys Game Jam #2,1795,3804,323,2019-02-16 08:00:00,https://www.itch.io/jam/brackeys-2
 Overall||Gameplay||Graphics||Audio||Innovation||Theme interpretation,2017-12-01 21:37:00,GitHub||Lee Reilly,Game Off 2017,2649,2333,197,2017-11-01 20:37:00,https://www.itch.io/jam/game-off-2017
 Overall||Innovation||Theme||Aesthetics||Feel,2017-07-17 06:00:00,metc||Game Maker's Toolkit,Game Maker's Toolkit Jam,2857,3702,729,2017-07-14 04:00:00,https://www.itch.io/jam/gmtk-jam
-Design,2018-09-02 21:00:00,Game Maker's Toolkit,Game Maker's Toolkit Jam 2018,3313,15600,1025,2018-08-31 21:00:00,https://www.itch.io/jam/gmtk-2018
+Design,2018-09-02 21:00:00,Game Maker's Toolkit,Game Maker's Toolkit Jam 2018,3313,15.6k,1025,2018-08-31 21:00:00,https://www.itch.io/jam/gmtk-2018
 Overall||How minimalistic was the art and/or music?||How would you rate the games mechanics?,2018-01-02 06:00:00,Water Flare,Minimalistic Jam 2,284,354,57,2017-12-23 06:00:00,https://www.itch.io/jam/minimalistic-jam-2
 ,2017-12-14 16:59:59,Weekly Game Jam||PouleyKetchoup||Nekomatata,Weekly Game Jam - Week 22,44,0,8,2017-12-08 16:59:59,https://www.itch.io/jam/weekly-game-jam-22
 ,2018-12-30 13:00:00,barsk,Summer Christmas,41,0,8,2018-11-30 13:00:00,https://www.itch.io/jam/summerchristmas
@@ -3044,7 +3044,7 @@ Please rate this  entry based on your overall enjoyment.,2014-12-02 07:59:00,Lea
 Overall||Gameplay||Visuals||Audio||Mood||Innovation,2019-08-26 21:00:00,Geta,Geta Game Jam 9,145,0,33,2019-08-23 21:00:00,https://www.itch.io/jam/geta-game-jam-9
 Enjoyment||Graphics||Sound,2018-03-10 03:00:00,Lartu||tejo240,Lartu's Mini-RPG One Week Jam,145,245,23,2018-03-03 03:00:00,https://www.itch.io/jam/lartus-mini-rpg-one-week-jam
 Overall||Innovation||Fun||Theme||Graphics||Audio||Humor||Mood,2019-03-04 02:30:00,Ieyfo||jordanb84,DISCORD JAM,145,336,35,2019-03-02 01:00:00,https://www.itch.io/jam/discord-jam1
-Plus Ultra!,2018-08-06 23:00:00,GameJamPlus,Game Jam Plus,146,11700,69,2018-07-27 22:00:00,https://www.itch.io/jam/game-jam-plus-
+Plus Ultra!,2018-08-06 23:00:00,GameJamPlus,Game Jam Plus,146,11.7k,69,2018-07-27 22:00:00,https://www.itch.io/jam/game-jam-plus-
 ,2019-04-01 04:59:59,supajackle||Meg Ziegler,Roll To Craft: A Tabletop Jam,151,0,38,2019-03-01 06:00:00,https://www.itch.io/jam/rtbjam
 ,2019-08-31 17:30:00,Swords and Flowers||Takuma Okada||Jamila R. Nedjadi||Melody Watson||KiennaS,Hot Horror Jam,152,0,70,2019-07-26 16:00:00,https://www.itch.io/jam/hothorrorjam
 ,2019-05-23 17:00:00,Weekly Game Jam||PouleyKetchoup||Nekomatata,Weekly Game Jam - Week 97,152,0,35,2019-05-17 17:00:00,https://www.itch.io/jam/weekly-game-jam-97
@@ -3263,5 +3263,5 @@ Overall||Fun||Visual Aesthetics||Use of Theme,2018-05-15 18:00:00,unrealengine,2
 Overall,2019-08-27 06:59:59,Extra Credits,Extra Credits Game Jam #5,866,0,186,2019-08-23 03:00:00,https://www.itch.io/jam/extra-credits-game-jam-5
 Overall||Game Design||Fun||Innovation||Theme||Graphics||Audio,2018-09-01 07:00:00,CodeMyst,Brackeys Game Jam,872,1445,166,2018-08-25 07:00:00,https://www.itch.io/jam/brackeys
 Overall||Gameplay||Graphics||Audio||Innovation||Theme interpretation,2018-12-01 21:37:00,GitHub||Lee Reilly,Game Off 2018,4128,2956,322,2018-11-01 20:37:00,https://www.itch.io/jam/game-off-2018
-Overall||Game Design||Fun||Innovation||Theme||Graphics||Audio,2019-08-31 19:00:00,CodeMyst||Sykoo||Blackthornprod Games||Dani||Brackeys||AquaXV||Yilian||TheDutchMagikarp||Duxez,Community Game Jam,6799,15900,1039,2019-08-24 19:00:00,https://www.itch.io/jam/cgj
+Overall||Game Design||Fun||Innovation||Theme||Graphics||Audio,2019-08-31 19:00:00,CodeMyst||Sykoo||Blackthornprod Games||Dani||Brackeys||AquaXV||Yilian||TheDutchMagikarp||Duxez,Community Game Jam,6799,15.9k,1039,2019-08-24 19:00:00,https://www.itch.io/jam/cgj
 Overall||Aestethics||Relevance||Polish||Synergy,2014-03-12 07:00:00,devi ever,Cyberpunk Jam,0,2726,253,2014-03-01 08:00:00,https://www.itch.io/jam/cyberpunk-jam
