@@ -15,7 +15,6 @@ competitive_jams[!names(competitive_jams) %in%  c("Popular")]%>%
 
 # Model building
 library(caret)
-library(e1071)
 trControl_boot <- trainControl(classProbs = TRUE,
                                method = "boot",
                                number = 100, 
@@ -27,6 +26,12 @@ lr_competitive_jam_boot <- train(popular ~ .,
                                  method = "glm",
                                  family = "binomial",
                                  trControl = trControl_boot)
+
+lrm_model <- lrm(popular ~ ., data = competitive_jams, x=T, y=T)
+lrm_model_boot <- bootcov(lrm_model, 
+                          B=100,
+                          pr=TRUE,
+                          maxit = 100000000000)
 
 # Summary
 summary(lr_competitive_jam_boot)
@@ -75,10 +80,10 @@ nom <- nomogram(lr_competitive_jam_nomogram_boot,
                 abbrev = TRUE,
                 lp=F,
                 funlabel = "Popularity")
-par(mar = c(1,0,0.2,0.1))
+par(mar = c(0.2,0,0.2,0))
 x <- plot(nom,
-          label.every=2,
-          fun.side=c(1,3,1,3,1),
+          label.every=1,
+          # fun.side=c(1,3,1,3,1),
           lmgp = 0.15,
           xfrac=.25
 )

@@ -22,6 +22,12 @@ df_jams.sort_values(by=['jam_duration'],
                     inplace=True)
 df_jams = df_jams.head(int(len(df_jams)*(99/100))) # remove top 1% in length
 
+# Write new cleaned jam dataset for debugging purpose only
+output_jam = "../dataset/jams_test.csv"
+if os.path.exists(output_jam):
+    os.remove(output_jam)
+df_jams.to_csv(output_jam, encoding='utf-8-sig', index=False)
+
 # join jam and jam desc
 df_jam_all = pd.merge(df_jams, df_jam_desc, on='jam_url', how='inner')
 

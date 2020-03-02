@@ -79,9 +79,9 @@ nom <- nomogram(lr_non_competitive_jam_nomogram_boot,
                 lp=F,
                 funlabel = "Popularity")
 
-par(mar = c(1,0,0.2,0.1))
+par(mar = c(0.2,0,0.2,0))
 plot(nom,
-     label.every=2,
+     label.every=1,
      fun.side=c(1,1,1,1,1),
      lmgp = 0.15,
      xfrac=.25

@@ -1,7 +1,7 @@
 library(Hmisc)
 # Correlation analysis tree
 clust <- varclus(data.matrix(game_data[,2:ncol(game_data)]))
-par(mar = c(4,4,0.1,0.1))
+par(mar = c(0.1,4.5,0,0))
 plot(clust)
 
 #remove correlated factors
@@ -85,7 +85,7 @@ nom <- nomogram(lr_games_condensed_boot,
                 lp=F,
                 vnames = "labels",
                 varname.label=TRUE,
-                funlabel = "High-ranked")
+                funlabel = "High-ranking")
 par(mar = c(0.1,0.1,0.1,0.1))
 plot(nom,
      label.every=1,
@@ -133,7 +133,7 @@ wilcox.test(high_ranking_games$desc_len,
 cliff.delta(high_ranking_games$desc_len, 
             low_ranking_games$desc_len)
 
-par(mar = c(2,0.1,0.1,0.1))
+par(mar = c(2,0.4,0.1,0.1))
 comp.dist.plot(high_ranking_games$desc_len, 
                low_ranking_games$desc_len,
                legend1 = "High-ranking games",
