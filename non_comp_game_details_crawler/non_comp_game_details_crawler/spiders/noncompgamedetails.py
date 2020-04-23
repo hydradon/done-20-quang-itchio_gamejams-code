@@ -160,6 +160,10 @@ class NoncompgamedetailsSpider(scrapy.Spider):
             elif ("author" in row_key.lower()) or ("authors" in row_key.lower()):
                 info[row_key] = "||".join(row.xpath("td[2]/a/text()").extract())
                 info["Author's Url"] = "||".join(row.xpath("td[2]/a/@href").extract())
+            elif ("mentions" in row_key.lower()):
+                info["Mentions"] = "||".join(row.xpath("td[2]/a/@href").extract())
+            elif ("links" in row_key.lower()):
+                info["Links"] = "||".join(row.xpath("td[2]/a/@href").extract())
             else:
                 info[row_key] = "||".join(row.xpath("td[2]/a/text()").extract())
 
@@ -180,6 +184,8 @@ class NoncompgamedetailsSpider(scrapy.Spider):
         item["game_developers"]      = info.get("Author", info.get("Authors", ""))
         item["game_developers_url"]  = info.get("Author's Url", "")
         item["game_multiplayer"]     = info.get("Multiplayer", "")
+        item["game_mentions"]        = info.get("Mentions", "")
+        item["game_links"]        = info.get("Links", "")
 
         # Download section
         UPLOAD_SELECTOR = ".upload"
