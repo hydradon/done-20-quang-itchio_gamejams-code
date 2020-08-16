@@ -222,22 +222,6 @@ df_final.drop(["jam_name",
               axis=1, inplace=True) 
 
 
-
-# this works!
-# from sklearn.feature_extraction.text import CountVectorizer
-# cv = CountVectorizer()
-# t = pd.DataFrame(cv.fit_transform(df_concat.game_platforms.fillna('').str.replace(r'\|\|', ' ')).A,
-#                      columns=cv.get_feature_names(),
-#                      index=df_concat.index).add_prefix('platform_')
-
-# df_final = pd.concat([df_concat, t], axis=1, sort=False)
-
-# This works too!!
-# s = [df_concat[col].str.get_dummies().add_prefix(f'{col.lower()}_') 
-#         for col in ['game_platforms']]
-# df_final = pd.concat([df_concat] + s, axis=1)
-
-
 # Write new cleaned game dataset
 output_game = "../dataset/games_cleaned_reduced.csv"
 if os.path.exists(output_game):

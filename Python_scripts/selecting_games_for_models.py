@@ -10,10 +10,6 @@ import math
 df_jams = pd.read_csv('../dataset/jams.csv')
 df_games = pd.read_csv('../dataset/all_games_details_cleaned.csv')
 
-# only get Engish jams
-# df_jams = df_jams[df_jams.jam_english == 'y']
-# print(len(df_jams))
-
 # only get jams with 10 submissions and above
 df_jams = df_jams[pd.to_numeric(df_jams.jam_no_submissions) >= 10]
 
