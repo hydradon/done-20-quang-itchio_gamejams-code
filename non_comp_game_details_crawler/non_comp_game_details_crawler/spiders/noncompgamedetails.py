@@ -30,7 +30,7 @@ class NoncompgamedetailsSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams-raw.csv'))
     # df['jam_criteria'] = df['jam_criteria'].replace(np.nan, '', regex=True)
     # df = df[df['jam_criteria'].map(len) == 0]
 

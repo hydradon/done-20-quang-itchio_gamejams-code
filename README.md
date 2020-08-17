@@ -31,25 +31,6 @@ cd non_comp_game_details_crawler
 scrapy crawl noncompgamedetails
 ```
 
-## 4. gameranking (**OUTDATED**)
-This spider crawls each jam's submission page for a list of its game entries and retrieves the ranking details of its games. Data is saved in [game_rankings.csv](./dataset/game_rankings.csv). Therefore, this crawler only produces data of games that have been submitted to competitive jams.
-
-### Run
-
-```
-cd game_ranking_crawler
-scrapy crawl gameranking
-```
-
-## 5. gamedetails (**OUTDATED**)
-This spider reads [game_rankings.csv](./dataset/game_rankings.csv) to get a list of all games that have been submitted and **RANKED** in competitive jams and produces [game_details.csv](./dataset/game_details.csv).
-
-### Run
-```
-cd game_details_crawler
-scrapy crawl gamedetails
-```
-
 # II. Data cleaning, preprocessing
 
 ## 1. Cleaning jams
