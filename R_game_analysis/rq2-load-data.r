@@ -1,11 +1,9 @@
-game_data <- read.csv("D:/Research/game-jam-crawler-model/dataset/games_cleaned.csv", 
+game_data <- read.csv("../dataset/games_cleaned.csv", 
                       encoding = "UTF-8" ,
                       stringsAsFactors = FALSE,
                       na.strings=c("","NA"))
 colnames(game_data)[colnames(game_data)=="X.U.FEFF.game_desc_len"] <- "desc_len"    
-colnames(game_data)[colnames(game_data)=="game_no_screenshots"] <- "num_imgs"
-colnames(game_data)[colnames(game_data)=="number_of_developers"] <- "num_devs"
-colnames(game_data)[colnames(game_data)=="aveSession_A.few.minutes"] <- "avgSession_A.few.minutes"    
+colnames(game_data)[colnames(game_data)=="game_no_screenshots"] <- "num_imgs"   
 colnames(game_data)[colnames(game_data)=="madeWith_GameMaker..Studio"] <- "madeWith_GameMaker.Studio"    
 
 game_data[is.na(game_data)] <- 0
