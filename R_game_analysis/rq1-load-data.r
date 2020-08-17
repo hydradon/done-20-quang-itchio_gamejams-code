@@ -1,21 +1,10 @@
 #===================== Loading non-competitive jams data=======================================#
-non_competitive_jams <- read.csv("D:/Research/game-jam-crawler-model/dataset/non_competitive_jams_cleaned.csv",
+non_competitive_jams <- read.csv("../dataset/non_competitive_jams_cleaned.csv",
                                  encoding = "UTF-8" ,
                                  stringsAsFactors = FALSE,
                                  na.strings=c("","NA"))
-
-# Remove unused columns
-non_competitive_jams$X.U.FEFF.jam_criteria <- NULL 
-non_competitive_jams$jam_end_date <- NULL
-non_competitive_jams$jam_start_date <- NULL
-non_competitive_jams$jam_host <- NULL
-non_competitive_jams$jam_name_x <- NULL
-non_competitive_jams$jam_name_y <- NULL
-non_competitive_jams$jam_no_joined <- NULL
-non_competitive_jams$jam_no_rating <- NULL
-non_competitive_jams$jam_url <- NULL
-non_competitive_jams$jam_english <- NULL
-non_competitive_jams$jam_no_submissions <- NULL
+# Rename column
+colnames(non_competitive_jams)[colnames(non_competitive_jams) == "X.U.FEFF.duration"] <- "duration"
 
 # reorder column
 non_competitive_jams <- non_competitive_jams[, c(6, 1:5)]
@@ -38,18 +27,9 @@ competitive_jams <- read.csv("../dataset/competitive_jams_cleaned.csv",
                              stringsAsFactors = FALSE,
                              na.strings=c("","NA"))
 
-# Remove unused columns
-competitive_jams$X.U.FEFF.jam_criteria <- NULL
-competitive_jams$jam_end_date <- NULL
-competitive_jams$jam_start_date <- NULL
-competitive_jams$jam_host <- NULL
-competitive_jams$jam_name_x <- NULL
-competitive_jams$jam_name_y <- NULL
-competitive_jams$jam_no_joined <- NULL
-competitive_jams$jam_no_rating <- NULL
-competitive_jams$jam_url <- NULL
-competitive_jams$jam_english <- NULL
-competitive_jams$jam_no_submissions <- NULL
+# Rename column
+colnames(competitive_jams)[colnames(competitive_jams) == "X.U.FEFF.duration"] <- "duration"
+
 
 # reorder column
 competitive_jams <- competitive_jams[, c(7, 1:6)]
