@@ -1,13 +1,7 @@
-all_jams <- read.csv("D:/ECE720 project/dataset/jams1.csv", encoding = "UTF-8" ,stringsAsFactors = FALSE)
+all_jams <- read.csv("../dataset/jams-raw.csv", encoding = "UTF-8", stringsAsFactors = FALSE)
 
 non_competitive_jams <- subset(all_jams, lengths(strsplit(X.U.FEFF.jam_criteria, "\\|\\|")) == 0)
 competitive_jams <- subset(all_jams, lengths(strsplit(X.U.FEFF.jam_criteria, "\\|\\|")) > 0)
-
-sample_non_competitive_jams <- non_competitive_jams[sample(nrow(non_competitive_jams), 91), ]
-
-write.csv(sample_non_competitive_jams, file = "non-competitive-jams-sample.csv",row.names=FALSE)
-
-
 
 library(tidyverse)
 library(beanplot)

@@ -35,42 +35,18 @@ scrapy crawl noncompgamedetails
 
 ## 1. Cleaning jams
 
-a. Initial cleaning:
+Notebook: [select_jams.ipynb](./analysis_notebooks/select_jams.ipynb).
 
-Script: [cleaning_jams_raw_data.py](./Python_scripts/cleaning_jams_raw_data.py).
-```
-python ./Python_scripts/cleaning_jams_raw_data.py
-```
-
-b. Seleting top and bottom 20% jams in terms of number of submissions:
-
-Script: [selecting_jams_for_models.py](./Python_scripts/selecting_jams_for_models.py).
-```
-python ./Python_scripts/selecting_jams_for_models.py
-```
-
-=> Final produced dataset: 
+=> Final jam dataset: 
 - [competitive_jams_cleaned.csv](./dataset/competitive_jams_cleaned.csv).
--  [non_competitive_jams_cleaned.csv](./dataset/non_competitive_jams_cleaned.csv).
+- [non_competitive_jams_cleaned.csv](./dataset/non_competitive_jams_cleaned.csv).
 
-## 2. Cleaning game details
+## 2. Cleaning games
 
-a. Initial cleaning:
-Script: [cleaning_game_data.py](./Python_scripts/cleaning_game_data.py).
-```
-python ./Python_scripts/cleaning_game_data.py
-```
+Notebook: [select_games.ipynb](./analysis_notebooks/select_games.ipynb).
 
-b. Seleting top and bottom 20% games in terms of ranking:
-
-Script: [selecting_games_for_models.py](./Python_scripts/selecting_games_for_models.py).
-```
-python ./Python_scripts/selecting_games_for_models.py
-```
-
-=> Final dataset: 
-- [games_cleaned_before_encoding.csv](./dataset/games_cleaned_before_encoding.csv).
-- [games_cleaned.csv](./dataset/games_cleaned.csv) => This dataset is an encoded version of the above, for model building.
+=> Final game dataset: 
+- [games_cleaned.csv](./dataset/games_cleaned.csv) => for model building.
 
 # III. Analysis
 
