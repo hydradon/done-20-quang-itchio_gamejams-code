@@ -2,7 +2,7 @@
 
 ## 1. itchio
 
-This spider crawls the main page [https://itch.io/jams/past](https://itch.io/jams/past) for jams and their information: ranking details, duration, number of submissions. The data is stored under [jams-raw.csv](./dataset/jams-raw.csv). The data needs to be cleaned first by running this script [cleaning_jams_raw_data.py](./Python_scripts/cleaning_jams_raw_data.py), which produces [jams.csv](./dataset/jams.csv).
+This spider crawls the main page [https://itch.io/jams/past](https://itch.io/jams/past) for jams and their information: ranking details, duration, number of submissions. The data is stored under [jams-raw.csv](./dataset/jams-raw.csv).
 
 ### Run
 
@@ -13,7 +13,7 @@ scrapy crawl itchio
 
 ## 2. jamdesc
 
-This spider reads the jam links from [jams.csv](./dataset/jams.csv) and crawls each jam page for its description, screenshots, videos.
+This spider reads the jam links from [jams-raw.csv](./dataset/jams-raw.csv) and crawls each jam page for its description, screenshots, videos.
 
 ### Run
 
@@ -23,7 +23,7 @@ scrapy crawl jamdesc
 ```
 
 ## 3. noncompgamedetails
-This spider reads [jams.csv](./dataset/jams.csv) and goes to each jam's list of submissions and crawl all game details. This produces [all_game_details.csv](./dataset/all_game_details.csv), which needs to be cleaned by [cleaning_game_data.py](./Python_scripts/cleaning_game_data.py), which produces [all_games_details_cleaned.csv](./dataset/all_games_details_cleaned.csv).
+This spider reads [jams-raw.csv](./dataset/jams.csv) and goes to each jam's list of submissions and crawl all game details. This produces [all_game_details.csv](./dataset/all_game_details.csv).
 
 ### Run
 ```
