@@ -65,3 +65,9 @@ Dataset used: [games_cleaned.csv](./dataset/games_cleaned.csv)
 R scripts:
 - Load and prepare data: [rq2-load-data.r](./R_game_analysis/rq2-load-data.r).
 - Model building, analysis: [rq2.r](./R_game_analysis/rq2.r).
+
+# IV. Publication
+
+This research has been published in the 2020 International Conference on the Foundations of Digital Games (FDG).
+
+Download preprint: [here](https://www.researchgate.net/publication/340634103_An_Empirical_Study_of_the_Characteristics_of_Popular_Game_Jams_and_Their_High-ranking_Submissions_on_itchio)
