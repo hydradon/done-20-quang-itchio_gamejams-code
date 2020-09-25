@@ -21,12 +21,12 @@ class JamdescSpider(scrapy.Spider):
     grandParentDir = os.path.dirname(parentDir)
     greatGrandParentDir = os.path.dirname(grandParentDir)
 
-    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams1.csv'))
+    df = pd.read_csv(os.path.join(greatGrandParentDir + "\\dataset", 'jams-raw.csv'))
 
     start_urls = df["jam_url"].tolist()
 
-    start_urls = df["jam_url"].tolist()[:10]
-    start_urls = ["https://itch.io/jam/cyberpunk-jam"]
+    # start_urls = df["jam_url"].tolist()[:10]
+    # start_urls = ["https://itch.io/jam/cyberpunk-jam"]
 
     def parse(self, response):
 
